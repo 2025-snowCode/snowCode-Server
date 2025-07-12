@@ -7,6 +7,7 @@ import snowcode.snowcode.auth.domain.Member;
 import snowcode.snowcode.auth.domain.Role;
 import snowcode.snowcode.auth.dto.MemberRequest;
 import snowcode.snowcode.auth.dto.MemberResponse;
+import snowcode.snowcode.auth.dto.MyProfileResponse;
 import snowcode.snowcode.auth.exception.AuthErrorCode;
 import snowcode.snowcode.auth.exception.AuthException;
 import snowcode.snowcode.auth.repository.MemberRepository;
@@ -25,12 +26,12 @@ public class MemberService {
         return MemberResponse.from(member);
     }
 
-    public MemberResponse findMemberById(long id) {
+    public MyProfileResponse findMemberById(Long id) {
         Member member = findMember(id);
-        return MemberResponse.from(member);
+        return MyProfileResponse.from(member);
     }
 
-    public Member findMember(long id) {
+    public Member findMember(Long id) {
         return memberRepository.findById(id).orElseThrow(
                 () -> new AuthException(AuthErrorCode.MEMBER_NOT_FOUND)
         );
