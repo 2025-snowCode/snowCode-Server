@@ -1,11 +1,10 @@
 package snowcode.snowcode.auth.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import snowcode.snowcode.auth.dto.MemberCountListResponse;
-import snowcode.snowcode.auth.dto.MemberRequest;
-import snowcode.snowcode.auth.dto.MemberResponse;
-import snowcode.snowcode.auth.dto.MyProfileResponse;
+import snowcode.snowcode.auth.domain.Member;
+import snowcode.snowcode.auth.dto.*;
 import snowcode.snowcode.auth.service.MemberService;
 import snowcode.snowcode.common.response.BasicResponse;
 import snowcode.snowcode.common.response.ResponseUtil;
@@ -18,7 +17,7 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/signup")
-    public BasicResponse<MemberResponse> signup (@RequestBody MemberRequest rq) {
+    public BasicResponse<MemberResponse> signup (@Valid @RequestBody MemberRequest rq) {
         MemberResponse memberResponse = memberService.signup(rq);
         return ResponseUtil.success(memberResponse);
     }
@@ -33,5 +32,12 @@ public class MemberController {
     public BasicResponse<MemberCountListResponse> findAllMember() {
         MemberCountListResponse rp = memberService.findAllMember();
         return ResponseUtil.success(rp);
+    }
+
+    @PostMapping("/{memberId}/students")
+    public BasicResponse<AddProfileResponse> updateStudentId(@PathVariable Long memberId, @Valid @RequestBody AddProfileRequest rq) {
+        Member member = memberService.findMember(memberId);
+        AddProfileResponse addProfileResponse = memberService.updateStudentId(member, rq.studentId());
+        return ResponseUtil.success(addProfileResponse);
     }
 }

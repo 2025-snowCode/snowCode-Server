@@ -21,7 +21,7 @@ public class Member extends BaseTimeEntity {
     @Column(nullable = false)
     private Role role;
 
-    private int studentId;
+    private String studentId;
     private String email;
 
     private Member(String name, Role role, String email) {
@@ -32,5 +32,10 @@ public class Member extends BaseTimeEntity {
 
     public static Member createMember(String name, Role role, String email) {
         return new Member(name, role, email);
+    }
+
+    public Member updateStudentId(String studentId) {
+        this.studentId = studentId;
+        return this;
     }
 }

@@ -5,10 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import snowcode.snowcode.auth.domain.Member;
 import snowcode.snowcode.auth.domain.Role;
-import snowcode.snowcode.auth.dto.MemberCountListResponse;
-import snowcode.snowcode.auth.dto.MemberRequest;
-import snowcode.snowcode.auth.dto.MemberResponse;
-import snowcode.snowcode.auth.dto.MyProfileResponse;
+import snowcode.snowcode.auth.dto.*;
 import snowcode.snowcode.auth.exception.AuthErrorCode;
 import snowcode.snowcode.auth.exception.AuthException;
 import snowcode.snowcode.auth.repository.MemberRepository;
@@ -27,6 +24,12 @@ public class MemberService {
         Member member = Member.createMember(rq.name(), Role.of(rq.role()), rq.email());
         memberRepository.save(member);
         return MemberResponse.from(member);
+    }
+
+    @Transactional
+    public AddProfileResponse updateStudentId(Member member, String studentId) {
+        member.updateStudentId(studentId);
+        return AddProfileResponse.from(member);
     }
 
     public MyProfileResponse findMemberById(Long id) {
