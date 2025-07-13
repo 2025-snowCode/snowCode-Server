@@ -48,7 +48,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<BasicResponse<ErrorEntity>> courseException(CourseException e) {
         HttpStatus status = switch(e.getCode()) {
             case COURSE_NOT_FOUND -> HttpStatus.NOT_FOUND;
-            case INVALID_SEMESTER -> HttpStatus.BAD_REQUEST;
+            case INVALID_SEMESTER, INVALID_YEAR -> HttpStatus.BAD_REQUEST;
         };
         log.error("Course Exception({}) = {}", e.getCode(), e.getMessage());
         BasicResponse<ErrorEntity> error = ResponseUtil.error(

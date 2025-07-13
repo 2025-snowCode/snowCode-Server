@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import snowcode.snowcode.common.BaseTimeEntity;
+import snowcode.snowcode.course.dto.CourseRequest;
 
 @Entity @Getter
 @Table(name = "course")
@@ -37,18 +38,15 @@ public class Course extends BaseTimeEntity {
         this.description = description;
     }
 
-    public Course(String name, String section, int year, Semester semester) {
-        this.name = name;
-        this.section = section;
-        this.year = year;
-        this.semester = semester;
-    }
-
     public static Course createCourse(String name, String section, int year, Semester semester, String description) {
         return new Course(name, section, year, semester, description);
     }
 
-    public static Course createCourse(String name, String section, int year, Semester semester) {
-        return new Course(name, section, year, semester);
+    public void updateCourse(String name, String section, int year, Semester semester, String description) {
+        this.name = name;
+        this.section = section;
+        this.year = year;
+        this.semester = semester;
+        this.description = description;
     }
 }
