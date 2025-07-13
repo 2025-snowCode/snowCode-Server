@@ -21,6 +21,7 @@ public class Member extends BaseTimeEntity {
     @Column(nullable = false)
     private Role role;
 
+    @Column(name = "student_id")
     private String studentId;
 
     @Column(nullable = false)

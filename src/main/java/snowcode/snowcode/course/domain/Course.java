@@ -5,7 +5,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import snowcode.snowcode.common.BaseTimeEntity;
-import snowcode.snowcode.course.dto.CourseRequest;
 
 @Entity @Getter
 @Table(name = "course")
@@ -26,11 +25,12 @@ public class Course extends BaseTimeEntity {
     private int year;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Semester semester;
 
     private String description;
 
-    public Course(String name, String section, int year, Semester semester, String description) {
+    private Course(String name, String section, int year, Semester semester, String description) {
         this.name = name;
         this.section = section;
         this.year = year;
