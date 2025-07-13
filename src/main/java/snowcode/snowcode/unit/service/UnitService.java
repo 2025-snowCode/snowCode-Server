@@ -6,6 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import snowcode.snowcode.common.DateTimeConverter;
 import snowcode.snowcode.course.domain.Course;
 import snowcode.snowcode.unit.domain.Unit;
+import snowcode.snowcode.unit.dto.UnitCountListResponse;
+import snowcode.snowcode.unit.dto.UnitListResponse;
 import snowcode.snowcode.unit.dto.UnitRequest;
 import snowcode.snowcode.unit.dto.UnitResponse;
 import snowcode.snowcode.unit.exception.UnitErrorCode;
@@ -13,6 +15,7 @@ import snowcode.snowcode.unit.exception.UnitException;
 import snowcode.snowcode.unit.repository.UnitRepository;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -39,6 +42,13 @@ public class UnitService {
         return UnitResponse.from(findUnit(id));
     }
 
+    public UnitCountListResponse findAllUnit() {
+        List<UnitListResponse> list = unitRepository.findAll().stream()
+                .map(UnitListResponse::from)
+                .toList();
+        return new UnitCountListResponse(list.size(), list);
+    }
+
     @Transactional
     public UnitResponse updateUnit(Long unitId, UnitRequest dto) {
         Unit unit = findUnit(unitId);
@@ -48,5 +58,11 @@ public class UnitService {
 
         unit.updateUnit(dto.title(), releaseDate, dueDate);
         return UnitResponse.from(unit);
+    }
+
+    @Transactional
+    public void deleteUnit(Long unitId) {
+        Unit unit = findUnit(unitId);
+        unitRepository.delete(unit);
     }
 }
