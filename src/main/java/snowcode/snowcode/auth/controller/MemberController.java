@@ -34,8 +34,8 @@ public class MemberController {
             @ApiResponse(responseCode = "400", description = "role에 USER, ADMIN이 아닌 다른 것을 넣은 경우",
                     content = {@Content(schema = @Schema(implementation = BasicResponse.class))}),
     })
-    public BasicResponse<MemberResponse> signup (@Valid @RequestBody MemberRequest rq) {
-        MemberResponse memberResponse = memberService.signup(rq);
+    public BasicResponse<MemberResponse> signup (@Valid @RequestBody MemberRequest dto) {
+        MemberResponse memberResponse = memberService.signup(dto);
         return ResponseUtil.success(memberResponse);
     }
 
@@ -48,14 +48,14 @@ public class MemberController {
 
     @GetMapping
     public BasicResponse<MemberCountListResponse> findAllMember() {
-        MemberCountListResponse rp = memberService.findAllMember();
-        return ResponseUtil.success(rp);
+        MemberCountListResponse dto = memberService.findAllMember();
+        return ResponseUtil.success(dto);
     }
 
     @PostMapping("/{memberId}/students")
-    public BasicResponse<AddProfileResponse> updateStudentId(@PathVariable Long memberId, @Valid @RequestBody AddProfileRequest rq) {
+    public BasicResponse<AddProfileResponse> updateStudentId(@PathVariable Long memberId, @Valid @RequestBody AddProfileRequest dto) {
         Member member = memberService.findMember(memberId);
-        AddProfileResponse addProfileResponse = memberService.updateStudentId(member, rq.studentId());
+        AddProfileResponse addProfileResponse = memberService.updateStudentId(member, dto.studentId());
         return ResponseUtil.success(addProfileResponse);
     }
 }

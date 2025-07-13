@@ -20,8 +20,8 @@ public class MemberService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public MemberResponse signup(MemberRequest rq) {
-        Member member = Member.createMember(rq.name(), Role.of(rq.role()), rq.email());
+    public MemberResponse signup(MemberRequest dto) {
+        Member member = Member.createMember(dto.name(), Role.of(dto.role()), dto.email());
         memberRepository.save(member);
         return MemberResponse.from(member);
     }
