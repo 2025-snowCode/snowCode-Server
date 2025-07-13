@@ -9,11 +9,14 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import snowcode.snowcode.auth.exception.AuthException;
+import snowcode.snowcode.common.exception.ValidationException;
 import snowcode.snowcode.common.response.BasicResponse;
 import snowcode.snowcode.common.response.ErrorEntity;
 import snowcode.snowcode.common.response.ResponseUtil;
 import snowcode.snowcode.course.exception.CourseException;
+import snowcode.snowcode.unit.exception.UnitException;
 
+import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -55,5 +58,25 @@ public class GlobalExceptionHandler {
                 new ErrorEntity(e.getCode().toString(), e.getMessage())
         );
         return new ResponseEntity<>(error, status);
+    }
+
+    @ExceptionHandler(UnitException.class)
+    public ResponseEntity<BasicResponse<ErrorEntity>> unitException(UnitException e) {
+        HttpStatus status = switch(e.getCode()) {
+            case UNIT_NOT_FOUND -> HttpStatus.NOT_FOUND;
+        };
+        log.error("Unit Exception({}) = {}", e.getCode(), e.getMessage());
+        BasicResponse<ErrorEntity> error = ResponseUtil.error(
+                new ErrorEntity(e.getCode().toString(), e.getMessage())
+        );
+        return new ResponseEntity<>(error, status);
+    }
+
+    @ExceptionHandler(ValidationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public BasicResponse<ErrorEntity> validationDateException (ValidationException e) {
+        log.error("Date Exception({}) = {}", "INVALID_DATE", e.getMessage());
+        return ResponseUtil.error(new ErrorEntity("INVALID_DATE", e.getMessage())
+        );
     }
 }
