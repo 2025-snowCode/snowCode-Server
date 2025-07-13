@@ -5,5 +5,5 @@ import jakarta.validation.constraints.NotBlank;
 
 public record MemberRequest(@NotBlank String name,
                             @NotBlank String role,
-                            @Email String email) {
+                            @NotBlank @Email String email) {
 }

@@ -34,8 +34,7 @@ public class Member extends BaseTimeEntity {
         return new Member(name, role, email);
     }
 
-    public Member updateStudentId(String studentId) {
+    public void updateStudentId(String studentId) {
         this.studentId = studentId;
-        return this;
     }
 }
