@@ -6,6 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import snowcode.snowcode.assignment.domain.Assignment;
 import snowcode.snowcode.assignment.dto.AssignmentRequest;
 import snowcode.snowcode.assignment.dto.AssignmentResponse;
+import snowcode.snowcode.assignment.exception.AssignmentErrorCode;
+import snowcode.snowcode.assignment.exception.AssignmentException;
 import snowcode.snowcode.assignment.repository.AssignmentRepository;
 
 @Service
@@ -19,5 +21,16 @@ public class AssignmentService {
         Assignment assignment = Assignment.createAssignment(dto.title(), dto.score(), dto.description());
         assignmentRepository.save(assignment);
         return AssignmentResponse.from(assignment);
+    }
+
+    public AssignmentResponse findAssignment (Long id) {
+        Assignment assignment = findById(id);
+        return AssignmentResponse.from(assignment);
+    }
+
+    public Assignment findById(Long id) {
+        return assignmentRepository.findById(id).orElseThrow(
+                () -> new AssignmentException(AssignmentErrorCode.ASSIGNMENT_NOT_FOUND)
+        );
     }
 }

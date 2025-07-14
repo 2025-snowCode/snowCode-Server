@@ -2,10 +2,7 @@ package snowcode.snowcode.assignment.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import snowcode.snowcode.assignment.dto.AssignmentRequest;
 import snowcode.snowcode.assignment.dto.AssignmentResponse;
 import snowcode.snowcode.assignment.service.AssignmentService;
@@ -22,6 +19,12 @@ public class AssignmentController {
     @PostMapping
     public BasicResponse<AssignmentResponse> createAssignment(@Valid @RequestBody AssignmentRequest dto) {
         AssignmentResponse assignment = assignmentService.createAssignment(dto);
+        return ResponseUtil.success(assignment);
+    }
+
+    @GetMapping("/{assignmentId}")
+    public BasicResponse<AssignmentResponse> findAssignment(@PathVariable Long assignmentId) {
+        AssignmentResponse assignment = assignmentService.findAssignment(assignmentId);
         return ResponseUtil.success(assignment);
     }
 }
