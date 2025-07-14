@@ -33,4 +33,10 @@ public class AssignmentController {
         AssignmentResponse assignment = assignmentService.updateAssignment(assignmentId, dto);
         return ResponseUtil.success(assignment);
     }
+
+    @DeleteMapping("/{assignmentId}")
+    public BasicResponse<String> deleteAssignment(@PathVariable Long assignmentId) {
+        assignmentService.deleteAssignment(assignmentId);
+        return ResponseUtil.success("과제 삭제에 성공하였습니다.");
+    }
 }

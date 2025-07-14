@@ -40,4 +40,10 @@ public class AssignmentService {
         assignment.updateAssignment(dto.title(), dto.score(), dto.description());
         return AssignmentResponse.from(assignment);
     }
+
+    @Transactional
+    public void deleteAssignment(Long id) {
+        Assignment assignment = findById(id);
+        assignmentRepository.delete(assignment);
+    }
 }
