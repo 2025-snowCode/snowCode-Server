@@ -27,4 +27,10 @@ public class AssignmentController {
         AssignmentResponse assignment = assignmentService.findAssignment(assignmentId);
         return ResponseUtil.success(assignment);
     }
+
+    @PutMapping("/{assignmentId}")
+    public BasicResponse<AssignmentResponse> updateAssignment(@PathVariable Long assignmentId, @Valid @RequestBody AssignmentRequest dto) {
+        AssignmentResponse assignment = assignmentService.updateAssignment(assignmentId, dto);
+        return ResponseUtil.success(assignment);
+    }
 }

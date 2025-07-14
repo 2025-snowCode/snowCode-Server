@@ -33,4 +33,10 @@ public class Assignment extends BaseTimeEntity {
     public static Assignment createAssignment(String title, int score, String description) {
         return new Assignment(title, score, description);
     }
+
+    public void updateAssignment(String title, int score, String description) {
+        this.title = title;
+        this.score = score;
+        this.description = description;
+    }
 }

@@ -33,4 +33,11 @@ public class AssignmentService {
                 () -> new AssignmentException(AssignmentErrorCode.ASSIGNMENT_NOT_FOUND)
         );
     }
+
+    @Transactional
+    public AssignmentResponse updateAssignment(Long id, AssignmentRequest dto) {
+        Assignment assignment = findById(id);
+        assignment.updateAssignment(dto.title(), dto.score(), dto.description());
+        return AssignmentResponse.from(assignment);
+    }
 }
