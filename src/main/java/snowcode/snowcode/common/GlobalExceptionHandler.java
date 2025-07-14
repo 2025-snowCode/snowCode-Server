@@ -8,6 +8,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import snowcode.snowcode.assignment.exception.AssignmentException;
 import snowcode.snowcode.auth.exception.AuthException;
 import snowcode.snowcode.common.exception.ValidationException;
 import snowcode.snowcode.common.response.BasicResponse;
@@ -78,5 +79,17 @@ public class GlobalExceptionHandler {
         log.error("Date Exception({}) = {}", "INVALID_DATE", e.getMessage());
         return ResponseUtil.error(new ErrorEntity("INVALID_DATE", e.getMessage())
         );
+    }
+
+    @ExceptionHandler(AssignmentException.class)
+    public ResponseEntity<BasicResponse<ErrorEntity>> assignmentException(AssignmentException e) {
+        HttpStatus status = switch(e.getCode()) {
+            case ASSIGNMENT_NOT_FOUND -> HttpStatus.NOT_FOUND;
+        };
+        log.error("Assignment Exception({}) = {}", e.getCode(), e.getMessage());
+        BasicResponse<ErrorEntity> error = ResponseUtil.error(
+                new ErrorEntity(e.getCode().toString(), e.getMessage())
+        );
+        return new ResponseEntity<>(error, status);
     }
 }
