@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import snowcode.snowcode.assignment.exception.AssignmentException;
 import snowcode.snowcode.auth.exception.AuthException;
+import snowcode.snowcode.code.exception.CodeException;
 import snowcode.snowcode.common.exception.ValidationException;
 import snowcode.snowcode.common.response.BasicResponse;
 import snowcode.snowcode.common.response.ErrorEntity;
@@ -108,7 +109,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(SubmissionException.class)
-    public ResponseEntity<BasicResponse<ErrorEntity>> submission(SubmissionException e) {
+    public ResponseEntity<BasicResponse<ErrorEntity>> submissionException(SubmissionException e) {
         HttpStatus status = switch(e.getCode()) {
             case SUBMISSION_NOT_FOUND -> HttpStatus.NOT_FOUND;
         };
@@ -120,12 +121,25 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(TestcaseException.class)
-    public ResponseEntity<BasicResponse<ErrorEntity>> submission(TestcaseException e) {
+    public ResponseEntity<BasicResponse<ErrorEntity>> testcaseException(TestcaseException e) {
         HttpStatus status = switch(e.getCode()) {
             case TESTCASE_NOT_FOUND -> HttpStatus.NOT_FOUND;
             case INVALID_TESTCASE_ROLE_TYPE -> HttpStatus.BAD_REQUEST;
         };
         log.error("Testcase Exception({}) = {}", e.getCode(), e.getMessage());
+        BasicResponse<ErrorEntity> error = ResponseUtil.error(
+                new ErrorEntity(e.getCode().toString(), e.getMessage())
+        );
+        return new ResponseEntity<>(error, status);
+    }
+
+    @ExceptionHandler(CodeException.class)
+    public ResponseEntity<BasicResponse<ErrorEntity>> codeException(CodeException e) {
+        HttpStatus status = switch(e.getCode()) {
+            case CODE_NOT_FOUND -> HttpStatus.NOT_FOUND;
+            case INVALID_LANGUAGE_TYPE -> HttpStatus.BAD_REQUEST;
+        };
+        log.error("Code Exception({}) = {}", e.getCode(), e.getMessage());
         BasicResponse<ErrorEntity> error = ResponseUtil.error(
                 new ErrorEntity(e.getCode().toString(), e.getMessage())
         );

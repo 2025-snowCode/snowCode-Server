@@ -13,9 +13,10 @@ public class SubmissionService {
 
     private final SubmissionRepository submissionRepository;
 
-    public void createSubmission(Member member, Assignment assignment) {
+    public Submission createSubmission(Member member, Assignment assignment) {
         Submission submission = Submission.createSubmission(0, member, assignment);
         submissionRepository.save(submission);
+        return submission;
     }
 
     public void deleteSubmissionWithAssigmentId(Long assignmentId) {
