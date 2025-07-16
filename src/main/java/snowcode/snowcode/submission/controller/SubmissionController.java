@@ -17,8 +17,6 @@ import snowcode.snowcode.submission.service.SubmissionFacade;
 @RequiredArgsConstructor
 @RequestMapping("/assignments")
 public class SubmissionController {
-    ///assignments/{assignmentId}/code/{codeId}
-
     private final SubmissionFacade submissionFacade;
     private final AssignmentService assignmentService;
     private final MemberService memberService;
