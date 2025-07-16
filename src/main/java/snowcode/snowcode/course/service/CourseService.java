@@ -13,20 +13,19 @@ import snowcode.snowcode.course.exception.CourseException;
 import snowcode.snowcode.course.repository.CourseRepository;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 @RequiredArgsConstructor
 public class CourseService {
     private final CourseRepository courseRepository;
 
-    @Transactional
-    public CourseResponse createCourse(CourseRequest dto) {
+    public Course createCourse(CourseRequest dto) {
 
         int year = Validator.validYear(dto.year());
         Semester semester = Semester.valueOf(dto.semester());
 
         Course course = Course.createCourse(dto.name(), dto.section(), year, semester, dto.description());
         courseRepository.save(course);
-        return CourseResponse.from(course);
+        return course;
     }
 
     public Course findCourse(Long id) {
@@ -34,7 +33,6 @@ public class CourseService {
                 () -> new CourseException(CourseErrorCode.COURSE_NOT_FOUND));
     }
 
-    @Transactional
     public CourseResponse updateCourse(Long id, CourseRequest dto) {
         Course course = findCourse(id);
 
@@ -45,7 +43,6 @@ public class CourseService {
         return CourseResponse.from(course);
     }
 
-    @Transactional
     public void deleteCourse(Long id) {
         Course course = findCourse(id);
         courseRepository.delete(course);

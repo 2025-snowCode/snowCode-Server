@@ -65,4 +65,9 @@ public class UnitService {
         Unit unit = findUnit(unitId);
         unitRepository.delete(unit);
     }
+
+    @Transactional
+    public void deleteUnitWithCourseId(Long courseId) {
+        unitRepository.deleteByCourseId(courseId);
+    }
 }
