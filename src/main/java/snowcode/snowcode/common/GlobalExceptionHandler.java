@@ -15,9 +15,11 @@ import snowcode.snowcode.common.response.BasicResponse;
 import snowcode.snowcode.common.response.ErrorEntity;
 import snowcode.snowcode.common.response.ResponseUtil;
 import snowcode.snowcode.course.exception.CourseException;
+import snowcode.snowcode.enrollment.exception.EnrollmentException;
+import snowcode.snowcode.submission.exception.SubmissionException;
+import snowcode.snowcode.testcase.exception.TestcaseException;
 import snowcode.snowcode.unit.exception.UnitException;
 
-import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -87,6 +89,43 @@ public class GlobalExceptionHandler {
             case ASSIGNMENT_NOT_FOUND -> HttpStatus.NOT_FOUND;
         };
         log.error("Assignment Exception({}) = {}", e.getCode(), e.getMessage());
+        BasicResponse<ErrorEntity> error = ResponseUtil.error(
+                new ErrorEntity(e.getCode().toString(), e.getMessage())
+        );
+        return new ResponseEntity<>(error, status);
+    }
+
+    @ExceptionHandler(EnrollmentException.class)
+    public ResponseEntity<BasicResponse<ErrorEntity>> enrollmentException(EnrollmentException e) {
+        HttpStatus status = switch(e.getCode()) {
+            case ENROLLMENT_NOT_FOUND -> HttpStatus.NOT_FOUND;
+        };
+        log.error("Enrollment Exception({}) = {}", e.getCode(), e.getMessage());
+        BasicResponse<ErrorEntity> error = ResponseUtil.error(
+                new ErrorEntity(e.getCode().toString(), e.getMessage())
+        );
+        return new ResponseEntity<>(error, status);
+    }
+
+    @ExceptionHandler(SubmissionException.class)
+    public ResponseEntity<BasicResponse<ErrorEntity>> submission(SubmissionException e) {
+        HttpStatus status = switch(e.getCode()) {
+            case SUBMISSION_NOT_FOUND -> HttpStatus.NOT_FOUND;
+        };
+        log.error("Submission Exception({}) = {}", e.getCode(), e.getMessage());
+        BasicResponse<ErrorEntity> error = ResponseUtil.error(
+                new ErrorEntity(e.getCode().toString(), e.getMessage())
+        );
+        return new ResponseEntity<>(error, status);
+    }
+
+    @ExceptionHandler(TestcaseException.class)
+    public ResponseEntity<BasicResponse<ErrorEntity>> submission(TestcaseException e) {
+        HttpStatus status = switch(e.getCode()) {
+            case TESTCASE_NOT_FOUND -> HttpStatus.NOT_FOUND;
+            case INVALID_TESTCASE_ROLE_TYPE -> HttpStatus.BAD_REQUEST;
+        };
+        log.error("Testcase Exception({}) = {}", e.getCode(), e.getMessage());
         BasicResponse<ErrorEntity> error = ResponseUtil.error(
                 new ErrorEntity(e.getCode().toString(), e.getMessage())
         );
