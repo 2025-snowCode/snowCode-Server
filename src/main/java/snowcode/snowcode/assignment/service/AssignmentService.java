@@ -21,10 +21,10 @@ public class AssignmentService {
     private final AssignmentRepository assignmentRepository;
 
     @Transactional
-    public AssignmentResponse createAssignment(AssignmentRequest dto) {
+    public Assignment createAssignment(AssignmentRequest dto) {
         Assignment assignment = Assignment.createAssignment(dto.title(), dto.score(), dto.description());
         assignmentRepository.save(assignment);
-        return AssignmentResponse.from(assignment);
+        return assignment;
     }
 
     public AssignmentResponse findAssignment (Long id) {
