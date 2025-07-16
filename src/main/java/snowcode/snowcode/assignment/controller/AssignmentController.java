@@ -22,10 +22,9 @@ public class AssignmentController {
     private final AssignmentRegistrationFacade assignmentRegistrationFacade;
     private final MemberService memberService;
 
-    @PostMapping("/{memberId}")
-    public BasicResponse<AssignmentResponse> createAssignment(@PathVariable Long memberId, @Valid @RequestBody AssignmentRequest dto) {
-        Member member = memberService.findMember(memberId);
-        AssignmentResponse assignment = assignmentRegistrationFacade.createAssignmentWithSubmission(member, dto);
+    @PostMapping
+    public BasicResponse<AssignmentResponse> createAssignment(@Valid @RequestBody AssignmentRequest dto) {
+        AssignmentResponse assignment = assignmentService.createAssignment(dto);
         return ResponseUtil.success(assignment);
     }
 
@@ -49,7 +48,7 @@ public class AssignmentController {
 
     @DeleteMapping("/{assignmentId}")
     public BasicResponse<String> deleteAssignment(@PathVariable Long assignmentId) {
-        assignmentService.deleteAssignment(assignmentId);
+        assignmentRegistrationFacade.deleteAssignmentWithSubmission(assignmentId);
         return ResponseUtil.success("과제 삭제에 성공하였습니다.");
     }
 }
