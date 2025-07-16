@@ -7,6 +7,8 @@ import snowcode.snowcode.testcase.domain.ExampleRole;
 import snowcode.snowcode.testcase.domain.Testcase;
 import snowcode.snowcode.testcase.dto.TestcaseRequest;
 import snowcode.snowcode.testcase.dto.TestcaseResponse;
+import snowcode.snowcode.testcase.exception.TestcaseErrorCode;
+import snowcode.snowcode.testcase.exception.TestcaseException;
 import snowcode.snowcode.testcase.repository.TestcaseRepository;
 
 @Service
@@ -21,5 +23,17 @@ public class TestcaseService {
         Testcase testcase = Testcase.createTestCase(dto.testcase(), dto.answer(), ExampleRole.of(dto.role()), dto.isPublic());
         testcaseRepository.save(testcase);
         return TestcaseResponse.from(testcase);
+    }
+
+    @Transactional
+    public void deleteTestcase(Long id) {
+        Testcase testcase = findById(id);
+        testcaseRepository.delete(testcase);
+    }
+
+    public Testcase findById(Long id) {
+        return testcaseRepository.findById(id).orElseThrow(
+                () -> new TestcaseException(TestcaseErrorCode.TESTCASE_NOT_FOUND)
+        );
     }
 }
