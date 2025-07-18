@@ -11,6 +11,8 @@ import snowcode.snowcode.enrollment.exception.EnrollmentErrorCode;
 import snowcode.snowcode.enrollment.exception.EnrollmentException;
 import snowcode.snowcode.enrollment.repository.EnrollmentRepository;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -32,5 +34,17 @@ public class EnrollmentService {
         return enrollmentRepository.findById(id).orElseThrow(
                 () -> new EnrollmentException(EnrollmentErrorCode.ENROLLMENT_NOT_FOUND)
         );
+    }
+
+    @Transactional(readOnly = true)
+    public List<Enrollment> findByMemberId(Long memberId) {
+        return enrollmentRepository.findAllByMemberId(memberId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Course> findCoursesByEnrollment(List<Enrollment> enrollments) {
+        return enrollments.stream()
+                .map(Enrollment::getCourse)
+                .toList();
     }
 }

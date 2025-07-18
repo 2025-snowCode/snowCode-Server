@@ -7,6 +7,7 @@ import snowcode.snowcode.auth.domain.Member;
 import snowcode.snowcode.auth.service.MemberService;
 import snowcode.snowcode.common.response.BasicResponse;
 import snowcode.snowcode.common.response.ResponseUtil;
+import snowcode.snowcode.course.dto.CourseCountListResponse;
 import snowcode.snowcode.course.dto.CourseRequest;
 import snowcode.snowcode.course.dto.CourseResponse;
 import snowcode.snowcode.course.service.CourseRegistrationFacade;
@@ -37,5 +38,11 @@ public class CourseController {
     public BasicResponse<String> deleteCourse(@PathVariable Long id) {
         courseRegistrationFacade.deleteCourseAndEnrollment(id);
         return ResponseUtil.success("강의 삭제에 성공하였습니다.");
+    }
+
+    @GetMapping("/{memberId}/my")
+    public BasicResponse<CourseCountListResponse> findMyCourses(@PathVariable Long memberId) {
+        CourseCountListResponse myCourses = courseRegistrationFacade.findMyCourses(memberId);
+        return ResponseUtil.success(myCourses);
     }
 }

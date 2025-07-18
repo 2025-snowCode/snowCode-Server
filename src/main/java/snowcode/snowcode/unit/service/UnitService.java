@@ -16,6 +16,8 @@ import snowcode.snowcode.unit.repository.UnitRepository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -69,5 +71,15 @@ public class UnitService {
     @Transactional
     public void deleteUnitWithCourseId(Long courseId) {
         unitRepository.deleteByCourseId(courseId);
+    }
+
+    public Map<Long, Integer> countUnitsByCourseId(List<Long> courseIds) {
+        List<Object[]> results = unitRepository.countUnitsByCourseIds(courseIds);
+
+        return results.stream()
+                .collect(Collectors.toMap(
+                        row -> (Long) row[0],
+                        row -> ((Long) row[1]).intValue()
+                ));
     }
 }

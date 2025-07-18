@@ -12,6 +12,9 @@ import snowcode.snowcode.course.exception.CourseErrorCode;
 import snowcode.snowcode.course.exception.CourseException;
 import snowcode.snowcode.course.repository.CourseRepository;
 
+import java.util.Collections;
+import java.util.List;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -46,5 +49,16 @@ public class CourseService {
     public void deleteCourse(Long id) {
         Course course = findCourse(id);
         courseRepository.delete(course);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Long> extractCourseIds(List<Course> courses) {
+        if (courses == null) {
+            return Collections.emptyList();
+        }
+
+        return courses.stream()
+                .map(Course::getId)
+                .toList();
     }
 }

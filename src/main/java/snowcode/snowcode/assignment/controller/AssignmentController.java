@@ -8,10 +8,10 @@ import snowcode.snowcode.assignment.dto.AssignmentRequest;
 import snowcode.snowcode.assignment.dto.AssignmentResponse;
 import snowcode.snowcode.assignment.service.AssignmentRegistrationFacade;
 import snowcode.snowcode.assignment.service.AssignmentService;
-import snowcode.snowcode.auth.domain.Member;
-import snowcode.snowcode.auth.service.MemberService;
 import snowcode.snowcode.common.response.BasicResponse;
 import snowcode.snowcode.common.response.ResponseUtil;
+import snowcode.snowcode.unit.domain.Unit;
+import snowcode.snowcode.unit.service.UnitService;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,11 +20,12 @@ public class AssignmentController {
 
     private final AssignmentService assignmentService;
     private final AssignmentRegistrationFacade assignmentRegistrationFacade;
-    private final MemberService memberService;
+    private final UnitService unitService;
 
-    @PostMapping
-    public BasicResponse<AssignmentResponse> createAssignment(@Valid @RequestBody AssignmentRequest dto) {
-        AssignmentResponse assignment = assignmentService.createAssignment(dto);
+    @PostMapping("{unitId}")
+    public BasicResponse<AssignmentResponse> createAssignment(@PathVariable Long unitId, @Valid @RequestBody AssignmentRequest dto) {
+        Unit unit = unitService.findUnit(unitId);
+        AssignmentResponse assignment = assignmentService.createAssignment(unit, dto);
         return ResponseUtil.success(assignment);
     }
 
