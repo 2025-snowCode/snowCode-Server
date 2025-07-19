@@ -3,6 +3,8 @@ package snowcode.snowcode.course.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import snowcode.snowcode.assignment.dto.AssignmentScheduleResponse;
+import snowcode.snowcode.assignment.dto.AssignmentUpcomingDateResponse;
 import snowcode.snowcode.assignment.service.AssignmentService;
 import snowcode.snowcode.auth.domain.Member;
 import snowcode.snowcode.course.domain.Course;
