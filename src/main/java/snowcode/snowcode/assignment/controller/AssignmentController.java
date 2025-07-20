@@ -7,6 +7,7 @@ import snowcode.snowcode.assignment.dto.*;
 import snowcode.snowcode.assignment.service.AssignmentRegistrationFacade;
 import snowcode.snowcode.assignment.service.AssignmentScheduleService;
 import snowcode.snowcode.assignment.service.AssignmentService;
+import snowcode.snowcode.assignment.service.AssignmentWithTestcaseFacade;
 import snowcode.snowcode.common.response.BasicResponse;
 import snowcode.snowcode.common.response.ResponseUtil;
 import snowcode.snowcode.unit.domain.Unit;
@@ -23,6 +24,7 @@ public class AssignmentController {
     private final AssignmentRegistrationFacade assignmentRegistrationFacade;
     private final UnitService unitService;
     private final AssignmentScheduleService assignmentScheduleService;
+    private final AssignmentWithTestcaseFacade assignmentWithTestcaseFacade;
 
     @PostMapping("{unitId}")
     public BasicResponse<AssignmentResponse> createAssignment(@PathVariable Long unitId, @Valid @RequestBody AssignmentRequest dto) {
@@ -37,9 +39,11 @@ public class AssignmentController {
         return ResponseUtil.success(assignment);
     }
 
-    // /assignments/{assignmentId}/info
-//    @GetMapping("/{assignmentId}/info")
-//    public BasicResponse<>
+    @GetMapping("/{assignmentId}/info")
+    public BasicResponse<AssignmentInfoResponse> getDetailAssignment(@PathVariable Long assignmentId) {
+        AssignmentInfoResponse assignmentInfo = assignmentWithTestcaseFacade.findAssignmentInfo(assignmentId);
+        return ResponseUtil.success(assignmentInfo);
+    }
 
     @GetMapping
     public BasicResponse<AssignmentCountListResponse> findAllAssignment() {
