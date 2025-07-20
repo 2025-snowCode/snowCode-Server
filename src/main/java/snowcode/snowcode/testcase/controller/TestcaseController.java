@@ -3,6 +3,8 @@ package snowcode.snowcode.testcase.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import snowcode.snowcode.assignment.domain.Assignment;
+import snowcode.snowcode.assignment.service.AssignmentService;
 import snowcode.snowcode.common.response.BasicResponse;
 import snowcode.snowcode.common.response.ResponseUtil;
 import snowcode.snowcode.testcase.dto.TestcaseRequest;
@@ -15,10 +17,12 @@ import snowcode.snowcode.testcase.service.TestcaseService;
 public class TestcaseController {
 
     private final TestcaseService testcaseService;
+    private final AssignmentService assignmentService;
 
-    @PostMapping
-    public BasicResponse<TestcaseResponse> createTestcase(@Valid @RequestBody TestcaseRequest dto) {
-        TestcaseResponse testcase = testcaseService.createTestcase(dto);
+    @PostMapping("{assignmentId}")
+    public BasicResponse<TestcaseResponse> createTestcase(@PathVariable Long assignmentId, @Valid @RequestBody TestcaseRequest dto) {
+        Assignment assignment = assignmentService.findById(assignmentId);
+        TestcaseResponse testcase = testcaseService.createTestcase(assignment, dto);
         return ResponseUtil.success(testcase);
     }
 

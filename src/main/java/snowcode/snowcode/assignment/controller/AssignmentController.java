@@ -5,7 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import snowcode.snowcode.assignment.dto.*;
 import snowcode.snowcode.assignment.service.AssignmentRegistrationFacade;
+import snowcode.snowcode.assignment.service.AssignmentScheduleService;
 import snowcode.snowcode.assignment.service.AssignmentService;
+import snowcode.snowcode.assignment.service.AssignmentWithTestcaseFacade;
 import snowcode.snowcode.common.response.BasicResponse;
 import snowcode.snowcode.common.response.ResponseUtil;
 import snowcode.snowcode.unit.domain.Unit;
@@ -21,6 +23,8 @@ public class AssignmentController {
     private final AssignmentService assignmentService;
     private final AssignmentRegistrationFacade assignmentRegistrationFacade;
     private final UnitService unitService;
+    private final AssignmentScheduleService assignmentScheduleService;
+    private final AssignmentWithTestcaseFacade assignmentWithTestcaseFacade;
 
     @PostMapping("{unitId}")
     public BasicResponse<AssignmentResponse> createAssignment(@PathVariable Long unitId, @Valid @RequestBody AssignmentRequest dto) {
@@ -35,6 +39,12 @@ public class AssignmentController {
         return ResponseUtil.success(assignment);
     }
 
+    @GetMapping("/{assignmentId}/info")
+    public BasicResponse<AssignmentInfoResponse> getDetailAssignment(@PathVariable Long assignmentId) {
+        AssignmentInfoResponse assignmentInfo = assignmentWithTestcaseFacade.findAssignmentInfo(assignmentId);
+        return ResponseUtil.success(assignmentInfo);
+    }
+
     @GetMapping
     public BasicResponse<AssignmentCountListResponse> findAllAssignment() {
         AssignmentCountListResponse assignments = assignmentService.findAllAssignment();
@@ -43,7 +53,7 @@ public class AssignmentController {
 
     @GetMapping("/{memberId}/schedule")
     public BasicResponse<AssignmentScheduleResponse> listUpMySchedule(@PathVariable Long memberId) {
-        AssignmentScheduleResponse assignments = assignmentService.listUpMySchedule(memberId);
+        AssignmentScheduleResponse assignments = assignmentScheduleService.listUpMySchedule(memberId);
         return ResponseUtil.success(assignments);
     }
 
