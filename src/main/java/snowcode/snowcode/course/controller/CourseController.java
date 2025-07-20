@@ -10,7 +10,7 @@ import snowcode.snowcode.common.response.ResponseUtil;
 import snowcode.snowcode.course.dto.CourseCountListResponse;
 import snowcode.snowcode.course.dto.CourseRequest;
 import snowcode.snowcode.course.dto.CourseResponse;
-import snowcode.snowcode.course.service.CourseRegistrationFacade;
+import snowcode.snowcode.course.service.CourseWithEnrollmentFacade;
 import snowcode.snowcode.course.service.CourseService;
 
 @RestController
@@ -18,13 +18,13 @@ import snowcode.snowcode.course.service.CourseService;
 @RequestMapping("/courses")
 public class CourseController {
     private final CourseService courseService;
-    private final CourseRegistrationFacade courseRegistrationFacade;
+    private final CourseWithEnrollmentFacade courseWithEnrollmentFacade;
     private final MemberService memberService;
 
     @PostMapping("/{memberId}")
     public BasicResponse<CourseResponse> createCourse(@PathVariable Long memberId, @Valid @RequestBody CourseRequest dto) {
         Member member = memberService.findMember(memberId);
-        CourseResponse course = courseRegistrationFacade.createCourseWithEnroll(member, dto);
+        CourseResponse course = courseWithEnrollmentFacade.createCourseWithEnroll(member, dto);
         return ResponseUtil.success(course);
     }
 
@@ -36,13 +36,13 @@ public class CourseController {
 
     @DeleteMapping("/{id}")
     public BasicResponse<String> deleteCourse(@PathVariable Long id) {
-        courseRegistrationFacade.deleteCourseAndEnrollment(id);
+        courseWithEnrollmentFacade.deleteCourseAndEnrollment(id);
         return ResponseUtil.success("강의 삭제에 성공하였습니다.");
     }
 
     @GetMapping("/{memberId}/my")
     public BasicResponse<CourseCountListResponse> findMyCourses(@PathVariable Long memberId) {
-        CourseCountListResponse myCourses = courseRegistrationFacade.findMyCourses(memberId);
+        CourseCountListResponse myCourses = courseWithEnrollmentFacade.findMyCourses(memberId);
         return ResponseUtil.success(myCourses);
     }
 }

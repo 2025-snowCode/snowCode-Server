@@ -3,15 +3,15 @@ package snowcode.snowcode.assignment.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import snowcode.snowcode.assignment.dto.AssignmentCountListResponse;
-import snowcode.snowcode.assignment.dto.AssignmentRequest;
-import snowcode.snowcode.assignment.dto.AssignmentResponse;
+import snowcode.snowcode.assignment.dto.*;
 import snowcode.snowcode.assignment.service.AssignmentRegistrationFacade;
 import snowcode.snowcode.assignment.service.AssignmentService;
 import snowcode.snowcode.common.response.BasicResponse;
 import snowcode.snowcode.common.response.ResponseUtil;
 import snowcode.snowcode.unit.domain.Unit;
 import snowcode.snowcode.unit.service.UnitService;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -38,6 +38,12 @@ public class AssignmentController {
     @GetMapping
     public BasicResponse<AssignmentCountListResponse> findAllAssignment() {
         AssignmentCountListResponse assignments = assignmentService.findAllAssignment();
+        return ResponseUtil.success(assignments);
+    }
+
+    @GetMapping("/{memberId}/schedule")
+    public BasicResponse<AssignmentScheduleResponse> listUpMySchedule(@PathVariable Long memberId) {
+        AssignmentScheduleResponse assignments = assignmentService.listUpMySchedule(memberId);
         return ResponseUtil.success(assignments);
     }
 

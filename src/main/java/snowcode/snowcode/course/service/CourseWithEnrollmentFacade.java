@@ -3,6 +3,8 @@ package snowcode.snowcode.course.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import snowcode.snowcode.assignment.dto.AssignmentScheduleResponse;
+import snowcode.snowcode.assignment.dto.AssignmentUpcomingDateResponse;
 import snowcode.snowcode.assignment.service.AssignmentService;
 import snowcode.snowcode.auth.domain.Member;
 import snowcode.snowcode.course.domain.Course;
@@ -15,14 +17,13 @@ import snowcode.snowcode.enrollment.service.EnrollmentService;
 import snowcode.snowcode.unit.service.UnitService;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class CourseRegistrationFacade {
+public class CourseWithEnrollmentFacade {
 
     private final CourseService courseService;
     private final EnrollmentService enrollmentService;
