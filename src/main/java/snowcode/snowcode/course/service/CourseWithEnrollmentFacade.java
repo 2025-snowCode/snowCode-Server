@@ -3,8 +3,6 @@ package snowcode.snowcode.course.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import snowcode.snowcode.assignment.dto.AssignmentScheduleResponse;
-import snowcode.snowcode.assignment.dto.AssignmentUpcomingDateResponse;
 import snowcode.snowcode.assignment.service.AssignmentService;
 import snowcode.snowcode.auth.domain.Member;
 import snowcode.snowcode.course.domain.Course;
@@ -14,6 +12,7 @@ import snowcode.snowcode.course.dto.CourseRequest;
 import snowcode.snowcode.course.dto.CourseResponse;
 import snowcode.snowcode.enrollment.domain.Enrollment;
 import snowcode.snowcode.enrollment.service.EnrollmentService;
+import snowcode.snowcode.student.service.StudentService;
 import snowcode.snowcode.unit.service.UnitService;
 
 import java.util.ArrayList;
@@ -29,10 +28,13 @@ public class CourseWithEnrollmentFacade {
     private final EnrollmentService enrollmentService;
     private final UnitService unitService;
     private final AssignmentService assignmentService;
+    private final StudentService studentService;
 
     public CourseResponse createCourseWithEnroll(Member member, CourseRequest dto) {
         Course course = courseService.createCourse(dto);
-        enrollmentService.createEnrollment(member, course);
+        List<Member> members = studentService.findStudents(dto.students());
+        studentService.addAdminInMembers(member, members);
+        enrollmentService.createEnrollment(members, course);
         return CourseResponse.from(course);
     }
 
