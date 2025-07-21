@@ -13,8 +13,6 @@ import snowcode.snowcode.common.response.ResponseUtil;
 import snowcode.snowcode.unit.domain.Unit;
 import snowcode.snowcode.unit.service.UnitService;
 
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/assignments")

@@ -11,6 +11,7 @@ import snowcode.snowcode.enrollment.exception.EnrollmentErrorCode;
 import snowcode.snowcode.enrollment.exception.EnrollmentException;
 import snowcode.snowcode.enrollment.repository.EnrollmentRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -23,6 +24,23 @@ public class EnrollmentService {
     public void createEnrollment(Member member, Course course) {
         Enrollment enrollment = Enrollment.createEnrollment(0, 0, EnrollmentStatus.ENROLLED, member, course);
         enrollmentRepository.save(enrollment);
+    }
+
+    public void createEnrollment(List<Member> members, Course course) {
+        List<Enrollment> enrollments = new ArrayList<>();
+        for (Member member : members) {
+            Enrollment enrollment = Enrollment.createEnrollment(0, 0, EnrollmentStatus.ENROLLED, member, course);
+            enrollments.add(enrollment);
+        }
+
+        enrollmentRepository.saveAll(enrollments);
+    }
+
+    public List<Long> ensureNotAlreadyEnrolled(List<Long> memberIds, Long courseId) {
+        List<Long> registeredIds = enrollmentRepository.findAlreadyEnrolledMemberIds(memberIds, courseId);
+        return memberIds.stream()
+                .filter(id -> !registeredIds.contains(id))
+                .toList();
     }
 
     public void deleteEnrollmentWithCourseId(Long courseId) {
