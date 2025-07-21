@@ -44,14 +44,14 @@ public class CourseWithMemberFacade {
         );
     }
 
-    public CourseDetailAdminResponse createAdminCourseResponse(Long memberId, Long courseId) {
+    public CourseDetailAdminResponse createAdminCourseResponse(Long courseId) {
         Course course = courseService.findCourse(courseId);
         List<Unit> unitList = unitService.findAllByCourseId(courseId);
 
         List<UnitDetailAdminResponse> unitDtoList = new ArrayList<>();
 
         for (Unit unit : unitList) {
-            unitDtoList.add(unitWithAssignmentFacade.createAdminUnitResponse(memberId, unit.getId()));
+            unitDtoList.add(unitWithAssignmentFacade.createAdminUnitResponse(unit.getId()));
         }
 
         return new CourseDetailAdminResponse(

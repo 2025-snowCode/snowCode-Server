@@ -45,14 +45,14 @@ public class UnitWithAssignmentFacade {
         );
     }
 
-    public UnitDetailAdminResponse createAdminUnitResponse(Long memberId, Long unitId) {
+    public UnitDetailAdminResponse createAdminUnitResponse(Long unitId) {
         Unit unit = unitService.findUnit(unitId);
         List<Assignment> assignmentList = assignmentService.findAllByUnitId(unitId);
 
         List<AssignmentDetailAdminResponse> assignmentDtoList = new ArrayList<>();
 
         for (Assignment assignment : assignmentList) {
-            assignmentDtoList.add(submissionWithAssignmentFacade.createAdminAssignmentResponse(memberId, assignment.getId()));
+            assignmentDtoList.add(submissionWithAssignmentFacade.createAdminAssignmentResponse(assignment.getId()));
         }
         boolean isOpen = unitService.isOpenUnit(unit.getReleaseDate());
 

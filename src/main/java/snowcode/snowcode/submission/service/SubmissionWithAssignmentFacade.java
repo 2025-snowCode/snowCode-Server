@@ -26,7 +26,7 @@ public class SubmissionWithAssignmentFacade {
         return new AssignmentDetailStudentResponse(assignmentId, assignment.getTitle(), status);
     }
 
-    public AssignmentDetailAdminResponse createAdminAssignmentResponse(Long memberId, Long assignmentId) {
+    public AssignmentDetailAdminResponse createAdminAssignmentResponse(Long assignmentId) {
         Assignment assignment = assignmentService.findById(assignmentId);
         return new AssignmentDetailAdminResponse(assignmentId, assignment.getTitle());
     }

@@ -51,7 +51,7 @@ public class CourseController {
     public BasicResponse<?> findCourse(@PathVariable Long memberId, @PathVariable Long courseId) {
         Member member = memberService.findMember(memberId);
         if (member.getRole().equals(Role.ADMIN)) {
-            CourseDetailAdminResponse course = courseWithMemberFacade.createAdminCourseResponse(memberId, courseId);
+            CourseDetailAdminResponse course = courseWithMemberFacade.createAdminCourseResponse(courseId);
             return ResponseUtil.success(course);
         } else {
             CourseDetailStudentResponse course = courseWithMemberFacade.createStudentCourseResponse(memberId, courseId);
