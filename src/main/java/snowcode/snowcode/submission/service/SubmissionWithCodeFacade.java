@@ -12,7 +12,7 @@ import snowcode.snowcode.submission.domain.Submission;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class SubmissionFacade {
+public class SubmissionWithCodeFacade {
 
     private final SubmissionService submissionService;
     private final CodeService codeService;

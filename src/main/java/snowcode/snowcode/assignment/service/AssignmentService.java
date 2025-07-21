@@ -65,4 +65,8 @@ public class AssignmentService {
                         row -> ((Long) row[1]).intValue()
                 ));
     }
+
+    public List<Assignment> findAllByUnitId(Long unitId) {
+        return assignmentRepository.findAllByUnitId(unitId);
+    }
 }

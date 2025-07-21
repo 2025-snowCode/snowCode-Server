@@ -11,13 +11,13 @@ import snowcode.snowcode.common.response.BasicResponse;
 import snowcode.snowcode.common.response.ResponseUtil;
 import snowcode.snowcode.submission.domain.Submission;
 import snowcode.snowcode.submission.dto.SubmissionResponse;
-import snowcode.snowcode.submission.service.SubmissionFacade;
+import snowcode.snowcode.submission.service.SubmissionWithCodeFacade;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/assignments")
 public class SubmissionController {
-    private final SubmissionFacade submissionFacade;
+    private final SubmissionWithCodeFacade submissionWithCodeFacade;
     private final AssignmentService assignmentService;
     private final MemberService memberService;
 
@@ -25,7 +25,7 @@ public class SubmissionController {
     public BasicResponse<SubmissionResponse> createSubmission(@PathVariable Long memberId, @PathVariable Long assignmentId, @RequestBody CodeRequest dto) {
         Member member = memberService.findMember(memberId);
         Assignment assignment = assignmentService.findById(assignmentId);
-        Submission submission = submissionFacade.createSubmissionWithCode(member, assignment, dto);
+        Submission submission = submissionWithCodeFacade.createSubmissionWithCode(member, assignment, dto);
         return ResponseUtil.success(SubmissionResponse.of(submission));
     }
 }

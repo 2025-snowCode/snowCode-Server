@@ -82,4 +82,12 @@ public class UnitService {
                         row -> ((Long) row[1]).intValue()
                 ));
     }
+
+    public boolean isOpenUnit(LocalDate releaseDate) {
+        return !releaseDate.isAfter(LocalDate.now());
+    }
+
+    public List<Unit> findAllByCourseId(Long courseId) {
+        return unitRepository.findAllByCourseId(courseId);
+    }
 }

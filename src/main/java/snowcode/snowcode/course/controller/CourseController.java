@@ -8,10 +8,12 @@ import snowcode.snowcode.auth.service.MemberService;
 import snowcode.snowcode.common.response.BasicResponse;
 import snowcode.snowcode.common.response.ResponseUtil;
 import snowcode.snowcode.course.dto.CourseCountListResponse;
+import snowcode.snowcode.course.dto.CourseDetailStudentResponse;
 import snowcode.snowcode.course.dto.CourseRequest;
 import snowcode.snowcode.course.dto.CourseResponse;
 import snowcode.snowcode.course.service.CourseWithEnrollmentFacade;
 import snowcode.snowcode.course.service.CourseService;
+import snowcode.snowcode.course.service.CourseWithStudentFacade;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,6 +22,7 @@ public class CourseController {
     private final CourseService courseService;
     private final CourseWithEnrollmentFacade courseWithEnrollmentFacade;
     private final MemberService memberService;
+    private final CourseWithStudentFacade courseWithStudentFacade;
 
     @PostMapping("/{memberId}")
     public BasicResponse<CourseResponse> createCourse(@PathVariable Long memberId, @Valid @RequestBody CourseRequest dto) {
@@ -44,5 +47,11 @@ public class CourseController {
     public BasicResponse<CourseCountListResponse> findMyCourses(@PathVariable Long memberId) {
         CourseCountListResponse myCourses = courseWithEnrollmentFacade.findMyCourses(memberId);
         return ResponseUtil.success(myCourses);
+    }
+
+    @GetMapping("/{memberId}/{courseId}")
+    public BasicResponse<CourseDetailStudentResponse> findCourse(@PathVariable Long memberId, @PathVariable Long courseId) {
+        CourseDetailStudentResponse course = courseWithStudentFacade.createStudentCourseResponse(memberId, courseId);
+        return ResponseUtil.success(course);
     }
 }

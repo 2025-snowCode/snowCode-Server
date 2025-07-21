@@ -12,4 +12,7 @@ public interface UnitRepository extends JpaRepository<Unit, Long> {
 
     @Query("SELECT u.course.id, COUNT(u) FROM Unit u WHERE u.course.id IN :courseIds GROUP BY u.course.id")
     List<Object[]> countUnitsByCourseIds(@Param("courseIds") List<Long> courseIds);
+
+    @Query("SELECT u FROM Unit u WHERE u.course.id = :courseId")
+    List<Unit> findAllByCourseId(Long courseId);
 }

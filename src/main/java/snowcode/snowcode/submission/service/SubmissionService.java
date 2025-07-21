@@ -7,6 +7,8 @@ import snowcode.snowcode.auth.domain.Member;
 import snowcode.snowcode.submission.domain.Submission;
 import snowcode.snowcode.submission.repository.SubmissionRepository;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class SubmissionService {
@@ -21,5 +23,9 @@ public class SubmissionService {
 
     public void deleteSubmissionWithAssigmentId(Long assignmentId) {
         submissionRepository.deleteByAssignmentId(assignmentId);
+    }
+
+    public Optional<Submission> isSubmitted(Long memberId, Assignment assignment) {
+        return submissionRepository.findByMemberIdAndAssignmentId(memberId, assignment.getId());
     }
 }
