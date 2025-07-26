@@ -14,7 +14,7 @@ public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
     List<Object[]> countAssignmentsByCourseIds(@Param("courseIds") List<Long> courseIds);
 
     @Query("""
-            SELECT c.name AS courseName,
+            SELECT c.title AS courseTitle,
                 c.section AS courseSection,
                 a.title AS assignmentName,
                 u.dueDate AS dueDate
