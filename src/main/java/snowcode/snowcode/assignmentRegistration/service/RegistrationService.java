@@ -4,10 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import snowcode.snowcode.assignment.domain.Assignment;
+import snowcode.snowcode.assignment.dto.AssignmentSimpleResponse;
 import snowcode.snowcode.assignmentRegistration.domain.AssignmentRegistration;
 import snowcode.snowcode.assignmentRegistration.repository.RegistrationRepository;
+import snowcode.snowcode.course.domain.Course;
 import snowcode.snowcode.unit.domain.Unit;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -34,6 +38,29 @@ public class RegistrationService {
 
     public List<Assignment> findAllByUnitId(Long unitId) {
         return registrationRepository.findAssignmentsByUnitId(unitId);
+    }
+
+    public Map<Course, List<AssignmentSimpleResponse>> findAssignmentsByCourseId(List<Long> courseIds) {
+        // FIXME - equals(), hashCode() 오버라이딩 필요
+        Map<Course, List<AssignmentSimpleResponse>> courseAssignmentMap = new HashMap<>();
+
+        List<Object[]> findAssignments;
+
+        if(!courseIds.isEmpty()) {
+            findAssignments = registrationRepository.findAssignmentsByCourseId(courseIds);
+        } else return courseAssignmentMap;
+
+        for (Object[] row : findAssignments) {
+            Course course = (Course) row[0];
+            Long assignmentId = (Long) row[1];
+            String title = (String) row[2];
+
+            courseAssignmentMap
+                    .computeIfAbsent(course, k -> new ArrayList<>())
+                    .add(new AssignmentSimpleResponse(assignmentId, title));
+        }
+
+        return courseAssignmentMap;
     }
 
     @Transactional
