@@ -30,8 +30,8 @@ public class UnitController {
     }
 
     @GetMapping("/{unitId}")
-    public BasicResponse<UnitResponse> findUnit(@PathVariable Long unitId) {
-        UnitResponse unit = unitService.findById(unitId);
+    public BasicResponse<UnitWithAssignmentResponse> findUnit(@PathVariable Long unitId) {
+        UnitWithAssignmentResponse unit = unitWithAssignmentFacade.findAllByUnitId(unitId);
         return ResponseUtil.success(unit);
     }
 

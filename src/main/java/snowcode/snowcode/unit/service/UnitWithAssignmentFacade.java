@@ -15,6 +15,7 @@ import snowcode.snowcode.unit.domain.Unit;
 import snowcode.snowcode.unit.dto.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -81,6 +82,17 @@ public class UnitWithAssignmentFacade {
                 assignmentDtoList.size(),
                 assignmentDtoList
         );
+    }
+
+    public UnitWithAssignmentResponse findAllByUnitId(Long unitId) {
+        Unit unit = unitService.findUnit(unitId);
+
+        List<Assignment> assignments = registrationService.findAllByUnitId(unitId);
+        List<AssignmentSimpleResponse> assignmentList = assignments.stream()
+                .map(AssignmentSimpleResponse::from)
+                .toList();
+
+        return UnitWithAssignmentResponse.from(unit, assignmentList);
     }
 
     @Transactional

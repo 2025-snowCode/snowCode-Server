@@ -34,15 +34,7 @@ public class RegistrationService {
     }
 
     public List<Assignment> findAllByUnitId(Long unitId) {
-        List<AssignmentRegistration> registrations = registrationRepository.findAllByUnitId(unitId);
-
-        List<Assignment> assignments = new ArrayList<>();
-
-        for (AssignmentRegistration registration : registrations) {
-            assignments.add(registration.getAssignment());
-        }
-
-        return assignments;
+        return registrationRepository.findAssignmentsByUnitId(unitId);
     }
 
     @Transactional

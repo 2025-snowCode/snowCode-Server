@@ -38,10 +38,6 @@ public class UnitService {
                 () -> new UnitException(UnitErrorCode.UNIT_NOT_FOUND));
     }
 
-    public UnitResponse findById(Long id) {
-        return UnitResponse.from(findUnit(id));
-    }
-
     @Transactional
     public UnitResponse updateUnit(Long unitId, UnitRequest dto) {
         Unit unit = findUnit(unitId);
