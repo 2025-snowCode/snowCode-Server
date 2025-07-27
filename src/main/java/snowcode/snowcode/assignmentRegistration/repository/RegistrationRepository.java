@@ -11,7 +11,7 @@ import java.util.List;
 public interface RegistrationRepository extends JpaRepository<AssignmentRegistration, Long> {
 
     @Query("""
-            SELECT u.course.id, COUNT(ar.assignment)
+            SELECT u.course.id, COUNT(ar)
             FROM AssignmentRegistration ar
             JOIN ar.unit u
             WHERE u.course.id IN :courseIds

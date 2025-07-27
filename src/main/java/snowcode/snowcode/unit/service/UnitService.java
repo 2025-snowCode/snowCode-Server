@@ -6,8 +6,6 @@ import org.springframework.transaction.annotation.Transactional;
 import snowcode.snowcode.common.DateTimeConverter;
 import snowcode.snowcode.course.domain.Course;
 import snowcode.snowcode.unit.domain.Unit;
-import snowcode.snowcode.unit.dto.UnitCountListResponse;
-import snowcode.snowcode.unit.dto.UnitListResponse;
 import snowcode.snowcode.unit.dto.UnitRequest;
 import snowcode.snowcode.unit.dto.UnitResponse;
 import snowcode.snowcode.unit.exception.UnitErrorCode;
@@ -42,13 +40,6 @@ public class UnitService {
 
     public UnitResponse findById(Long id) {
         return UnitResponse.from(findUnit(id));
-    }
-
-    public UnitCountListResponse findAllUnit() {
-        List<UnitListResponse> list = unitRepository.findAll().stream()
-                .map(UnitListResponse::from)
-                .toList();
-        return new UnitCountListResponse(list.size(), list);
     }
 
     @Transactional
@@ -92,5 +83,9 @@ public class UnitService {
 
     public List<Long> findIdsByCourseId(Long courseId) {
         return unitRepository.findIdByCourseId(courseId);
+    }
+
+    public List<Object[]> countAssignmentsByCourseId(Long courseId) {
+        return unitRepository.findUnitIdTitleAndAssignmentCount(courseId);
     }
 }

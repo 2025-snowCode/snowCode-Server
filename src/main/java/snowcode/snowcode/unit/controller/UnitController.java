@@ -35,12 +35,6 @@ public class UnitController {
         return ResponseUtil.success(unit);
     }
 
-    @GetMapping
-    public BasicResponse<UnitCountListResponse> findAllUnit() {
-        UnitCountListResponse unitCountListResponse = unitService.findAllUnit();
-        return ResponseUtil.success(unitCountListResponse);
-    }
-
     @PutMapping("/{unitId}")
     public BasicResponse<UnitResponse> updateUnit(@PathVariable Long unitId, @Valid @RequestBody UnitRequest dto) {
         UnitResponse unit = unitService.updateUnit(unitId, dto);

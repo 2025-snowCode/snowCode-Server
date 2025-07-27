@@ -12,6 +12,8 @@ import snowcode.snowcode.course.dto.*;
 import snowcode.snowcode.course.service.CourseWithEnrollmentFacade;
 import snowcode.snowcode.course.service.CourseService;
 import snowcode.snowcode.course.service.CourseWithMemberFacade;
+import snowcode.snowcode.unit.dto.UnitCountListResponse;
+import snowcode.snowcode.unit.service.UnitWithAssignmentFacade;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,6 +23,7 @@ public class CourseController {
     private final CourseWithEnrollmentFacade courseWithEnrollmentFacade;
     private final MemberService memberService;
     private final CourseWithMemberFacade courseWithMemberFacade;
+    private final UnitWithAssignmentFacade unitWithAssignmentFacade;
 
     @PostMapping("/{memberId}")
     public BasicResponse<CourseResponse> createCourse(@PathVariable Long memberId, @Valid @RequestBody CourseRequest dto) {
@@ -57,5 +60,11 @@ public class CourseController {
             CourseDetailStudentResponse course = courseWithMemberFacade.createStudentCourseResponse(memberId, courseId);
             return ResponseUtil.success(course);
         }
+    }
+
+    @GetMapping("/{courseId}/units")
+    public BasicResponse<UnitCountListResponse> findAllUnit(@PathVariable Long courseId) {
+        UnitCountListResponse unitCountListResponse = unitWithAssignmentFacade.findAllUnit(courseId);
+        return ResponseUtil.success(unitCountListResponse);
     }
 }

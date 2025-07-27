@@ -9,8 +9,10 @@ import snowcode.snowcode.assignment.dto.AssignmentDetailStudentResponse;
 import snowcode.snowcode.assignmentRegistration.service.RegistrationService;
 import snowcode.snowcode.submission.service.SubmissionWithAssignmentFacade;
 import snowcode.snowcode.unit.domain.Unit;
+import snowcode.snowcode.unit.dto.UnitCountListResponse;
 import snowcode.snowcode.unit.dto.UnitDetailAdminResponse;
 import snowcode.snowcode.unit.dto.UnitDetailStudentResponse;
+import snowcode.snowcode.unit.dto.UnitListResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,5 +73,19 @@ public class UnitWithAssignmentFacade {
     public void deleteAllByUnitId(Long unitId) {
         registrationService.deleteAllByUnitId(unitId);
         unitService.deleteUnit(unitId);
+    }
+
+    public UnitCountListResponse findAllUnit(Long courseId) {
+        List<Object[]> countUnits = unitService.countAssignmentsByCourseId(courseId);
+
+        List<UnitListResponse> dtoList = countUnits.stream()
+                .map (row -> new UnitListResponse(
+                        (Long) row[0],                  // id
+                        (String) row[1],                // title
+                        ((Long) row[2]).intValue()      // assignmentCount
+                ))
+                .toList();
+
+        return new UnitCountListResponse(dtoList.size(), dtoList);
     }
 }

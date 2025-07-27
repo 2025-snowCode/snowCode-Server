@@ -21,12 +21,7 @@ public class RegistrationService {
 
     public Map<Long, Integer> countAssignmentsByCourseId(List<Long> courseIds) {
         List<Object[]> results = registrationRepository.countAssignmentsByCourseIds(courseIds);
-
-        return results.stream()
-                        .collect(Collectors.toMap(
-                                row -> (Long) row[0],
-                                row -> ((Long) row[1]).intValue()
-                        ));
+        return objectToMap(results);
     }
 
     public List<Assignment> findAllByUnitId(Long unitId) {
@@ -55,5 +50,13 @@ public class RegistrationService {
     @Transactional
     public void deleteAllByUnitIdIn(List<Long> unitIds) {
         registrationRepository.deleteAllByUnitIdIn(unitIds);
+    }
+
+    private Map<Long, Integer> objectToMap(List<Object[]> results) {
+         return results.stream()
+                .collect(Collectors.toMap(
+                        row -> (Long) row[0],
+                        row -> ((Long) row[1]).intValue()
+                ));
     }
 }
