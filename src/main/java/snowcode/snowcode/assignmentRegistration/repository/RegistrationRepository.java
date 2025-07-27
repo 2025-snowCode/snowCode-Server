@@ -22,7 +22,8 @@ public interface RegistrationRepository extends JpaRepository<AssignmentRegistra
     List<AssignmentRegistration> findAllByUnitId(@Param("unitId") Long unitId);
 
     @Query("""
-                SELECT c.title AS courseTitle,
+                SELECT a.id AS assignmentId,
+                       c.title AS courseTitle,
                        c.section AS courseSection,
                        a.title AS assignmentTitle,
                        u.dueDate AS dueDate
