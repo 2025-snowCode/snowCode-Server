@@ -23,8 +23,8 @@ public class AssignmentController {
     private final AssignmentWithTestcaseFacade assignmentWithTestcaseFacade;
 
     @PostMapping
-    public BasicResponse<AssignmentResponse> createAssignment(@Valid @RequestBody AssignmentRequest dto) {
-        AssignmentResponse assignment = assignmentService.createAssignment(dto);
+    public BasicResponse<AssignmentInfoResponse> createAssignment(@Valid @RequestBody AssignmentCreateWithTestcaseRequest dto) {
+        AssignmentInfoResponse assignment = assignmentWithTestcaseFacade.createAssignment(dto);
         return ResponseUtil.success(assignment);
     }
 
