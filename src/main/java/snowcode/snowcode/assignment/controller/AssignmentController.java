@@ -29,12 +29,6 @@ public class AssignmentController {
     }
 
     @GetMapping("/{assignmentId}")
-    public BasicResponse<AssignmentResponse> findAssignment(@PathVariable Long assignmentId) {
-        AssignmentResponse assignment = assignmentService.findAssignment(assignmentId);
-        return ResponseUtil.success(assignment);
-    }
-
-    @GetMapping("/{assignmentId}/info")
     public BasicResponse<AssignmentInfoResponse> getDetailAssignment(@PathVariable Long assignmentId) {
         AssignmentInfoResponse assignmentInfo = assignmentWithTestcaseFacade.findAssignmentInfo(assignmentId);
         return ResponseUtil.success(assignmentInfo);
