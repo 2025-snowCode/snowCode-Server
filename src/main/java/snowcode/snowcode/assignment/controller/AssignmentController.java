@@ -4,7 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import snowcode.snowcode.assignment.dto.*;
-import snowcode.snowcode.assignment.service.AssignmentRegistrationFacade;
+import snowcode.snowcode.assignment.service.AssignmentDeleteFacade;
 import snowcode.snowcode.assignmentRegistration.dto.RegistrationScheduleResponse;
 import snowcode.snowcode.assignmentRegistration.service.RegistrationScheduleService;
 import snowcode.snowcode.assignment.service.AssignmentService;
@@ -18,7 +18,7 @@ import snowcode.snowcode.common.response.ResponseUtil;
 public class AssignmentController {
 
     private final AssignmentService assignmentService;
-    private final AssignmentRegistrationFacade assignmentRegistrationFacade;
+    private final AssignmentDeleteFacade assignmentDeleteFacade;
     private final RegistrationScheduleService registrationScheduleService;
     private final AssignmentWithTestcaseFacade assignmentWithTestcaseFacade;
 
@@ -60,7 +60,7 @@ public class AssignmentController {
 
     @DeleteMapping("/{assignmentId}")
     public BasicResponse<String> deleteAssignment(@PathVariable Long assignmentId) {
-        assignmentRegistrationFacade.deleteAssignmentWithSubmission(assignmentId);
+        assignmentDeleteFacade.deleteAssignmentWithAll(assignmentId);
         return ResponseUtil.success("과제 삭제에 성공하였습니다.");
     }
 }

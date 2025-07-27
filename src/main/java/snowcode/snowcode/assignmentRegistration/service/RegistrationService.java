@@ -40,4 +40,9 @@ public class RegistrationService {
 
         return assignments;
     }
+
+    @Transactional
+    public void deleteAllByAssignmentId(Long assignmentId) {
+        registrationRepository.deleteAllByAssignmentId(assignmentId);
+    }
 }

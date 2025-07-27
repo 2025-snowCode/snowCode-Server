@@ -6,8 +6,11 @@ import org.springframework.transaction.annotation.Transactional;
 import snowcode.snowcode.assignment.domain.Assignment;
 import snowcode.snowcode.auth.domain.Member;
 import snowcode.snowcode.code.dto.CodeRequest;
+import snowcode.snowcode.code.repository.CodeRepository;
 import snowcode.snowcode.code.service.CodeService;
 import snowcode.snowcode.submission.domain.Submission;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -16,10 +19,17 @@ public class SubmissionWithCodeFacade {
 
     private final SubmissionService submissionService;
     private final CodeService codeService;
+    private final CodeRepository codeRepository;
 
     public Submission createSubmissionWithCode(Member member, Assignment assignment, CodeRequest dto) {
         Submission submission = submissionService.createSubmission(member, assignment);
         codeService.createCode(submission, dto);
         return submission;
+    }
+
+    public void deleteSubmissionWithAssigmentId(Long assignmentId) {
+        List<Long> submissionIds = submissionService.findAllByAssignmentId(assignmentId);
+        codeRepository.deleteAllBySubmissionIdIn(submissionIds);
+        submissionService.deleteAllById(submissionIds);
     }
 }
