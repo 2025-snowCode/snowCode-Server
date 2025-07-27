@@ -45,6 +45,10 @@ public class AssignmentService {
         return new AssignmentCountListResponse(lst.size(), lst);
     }
 
+    public List<Assignment> findAllAssignmentById(List<Long> assignmentIds) {
+        return assignmentRepository.findAllById(assignmentIds);
+    }
+
     @Transactional
     public AssignmentResponse updateAssignment(Long id, AssignmentRequest dto) {
         Assignment assignment = findById(id);

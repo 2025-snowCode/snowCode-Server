@@ -29,7 +29,7 @@ public class AssignmentRegistration {
         this.assignment = assignment;
     }
 
-    public AssignmentRegistration createRegistration(Unit unit, Assignment assignment) {
+    public static AssignmentRegistration createRegistration(Unit unit, Assignment assignment) {
         return new AssignmentRegistration(unit, assignment);
     }
 }

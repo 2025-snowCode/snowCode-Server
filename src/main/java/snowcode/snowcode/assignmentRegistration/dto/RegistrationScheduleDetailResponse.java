@@ -1,4 +1,4 @@
 package snowcode.snowcode.assignmentRegistration.dto;
 
-public record RegistrationScheduleDetailResponse(String course, String section, String assignment) {
+public record RegistrationScheduleDetailResponse(Long id, String course, String section, String assignment) {
 }

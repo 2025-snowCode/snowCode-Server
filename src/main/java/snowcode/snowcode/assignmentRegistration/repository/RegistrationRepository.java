@@ -3,6 +3,7 @@ package snowcode.snowcode.assignmentRegistration.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import snowcode.snowcode.assignment.domain.Assignment;
 import snowcode.snowcode.assignmentRegistration.domain.AssignmentRegistration;
 
 import java.time.LocalDate;
@@ -19,10 +20,9 @@ public interface RegistrationRepository extends JpaRepository<AssignmentRegistra
     """)
     List<Object[]> countAssignmentsByCourseIds(@Param("courseIds") List<Long> courseIds);
 
-    List<AssignmentRegistration> findAllByUnitId(@Param("unitId") Long unitId);
-
     @Query("""
-                SELECT c.title AS courseTitle,
+                SELECT a.id AS assignmentId,
+                       c.title AS courseTitle,
                        c.section AS courseSection,
                        a.title AS assignmentTitle,
                        u.dueDate AS dueDate
@@ -42,9 +42,18 @@ public interface RegistrationRepository extends JpaRepository<AssignmentRegistra
                                                         @Param("today") LocalDate today,
                                                         @Param("endDate") LocalDate endDate);
 
+    @Query("""
+        SELECT a
+        FROM AssignmentRegistration ar
+        JOIN ar.assignment a
+        WHERE ar.unit.id = :unitId
+    """)
+    List<Assignment> findAssignmentsByUnitId(@Param("unitId") Long unitId);
+
     void deleteAllByAssignmentId(Long assignmentId);
     void deleteAllByUnitIdIn(List<Long> unitIds);
     void deleteAllByUnitId(Long unitId);
+    void deleteByUnitIdAndAssignmentId(Long unitId, Long assignmentId);
 
 
 }

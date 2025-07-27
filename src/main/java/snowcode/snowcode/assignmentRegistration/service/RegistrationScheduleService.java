@@ -50,12 +50,13 @@ public class RegistrationScheduleService {
 
         Map<LocalDate, List<RegistrationScheduleDetailResponse>> group = new TreeMap<>();
         for (Object[] row : result) {
-            String courseName = (String) row[0];
-            String section = (String) row[1];
-            String assignmentName = (String) row[2];
-            LocalDate dueDate = (LocalDate) row[3];
+            Long assignmentId = (Long) row[0];
+            String courseName = (String) row[1];
+            String section = (String) row[2];
+            String assignmentName = (String) row[3];
+            LocalDate dueDate = (LocalDate) row[4];
 
-            RegistrationScheduleDetailResponse detailDto = new RegistrationScheduleDetailResponse(courseName, section, assignmentName);
+            RegistrationScheduleDetailResponse detailDto = new RegistrationScheduleDetailResponse(assignmentId, courseName, section, assignmentName);
 
             if (!group.containsKey(dueDate)) {
                 group.put(dueDate, new ArrayList<>());
