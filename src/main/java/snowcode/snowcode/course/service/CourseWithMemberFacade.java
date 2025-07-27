@@ -36,7 +36,7 @@ public class CourseWithMemberFacade {
 
         return new CourseDetailStudentResponse(
                 courseId,
-                course.getName(),
+                course.getTitle(),
                 course.getYear(),
                 course.getSemester().toString(),
                 course.getSection(),
@@ -59,7 +59,7 @@ public class CourseWithMemberFacade {
 
         return new CourseDetailAdminResponse(
                 courseId,
-                course.getName(),
+                course.getTitle(),
                 course.getYear(),
                 course.getSemester().toString(),
                 course.getSection(),

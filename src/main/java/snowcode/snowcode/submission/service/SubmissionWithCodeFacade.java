@@ -9,6 +9,8 @@ import snowcode.snowcode.code.dto.CodeRequest;
 import snowcode.snowcode.code.service.CodeService;
 import snowcode.snowcode.submission.domain.Submission;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -21,5 +23,11 @@ public class SubmissionWithCodeFacade {
         Submission submission = submissionService.createSubmission(member, assignment);
         codeService.createCode(submission, dto);
         return submission;
+    }
+
+    public void deleteSubmissionWithAssigmentId(Long assignmentId) {
+        List<Long> submissionIds = submissionService.findAllByAssignmentId(assignmentId);
+        codeService.deleteAllBySubmissionIdIn(submissionIds);
+        submissionService.deleteAllById(submissionIds);
     }
 }

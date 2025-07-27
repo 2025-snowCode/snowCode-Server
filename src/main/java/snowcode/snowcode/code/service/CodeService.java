@@ -12,6 +12,8 @@ import snowcode.snowcode.code.exception.CodeException;
 import snowcode.snowcode.code.repository.CodeRepository;
 import snowcode.snowcode.submission.domain.Submission;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -34,5 +36,10 @@ public class CodeService {
     public CodeResponse findCode(Long id) {
         Code code = findById(id);
         return CodeResponse.from(code);
+    }
+
+    @Transactional
+    public void deleteAllBySubmissionIdIn(List<Long> submissionIds) {
+        codeRepository.deleteAllBySubmissionIdIn(submissionIds);
     }
 }

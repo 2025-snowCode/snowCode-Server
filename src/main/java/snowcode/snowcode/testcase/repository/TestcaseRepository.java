@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface TestcaseRepository extends JpaRepository<Testcase, Long> {
     List<Testcase> findByAssignmentId(Long assignmentId);
+
+    void deleteAllByAssignmentId(Long assignmentId);
 }

@@ -6,7 +6,7 @@ import snowcode.snowcode.student.dto.StudentRequest;
 
 import java.util.List;
 
-public record CourseRequest(@NotBlank String name,
+public record CourseRequest(@NotBlank String title,
                             @NotBlank String section,
                             @NotNull int year,
                             @NotBlank String semester,

@@ -24,20 +24,14 @@ public class Assignment extends BaseTimeEntity {
 
     private String description;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "unit_id")
-    private Unit unit;
-
-
-    private Assignment(Unit unit, String title, int score, String description) {
-        this.unit = unit;
+    private Assignment(String title, int score, String description) {
         this.title = title;
         this.score = score;
         this.description = description;
     }
 
-    public static Assignment createAssignment(Unit unit, String title, int score, String description) {
-        return new Assignment(unit, title, score, description);
+    public static Assignment createAssignment(String title, int score, String description) {
+        return new Assignment(title, score, description);
     }
 
     public void updateAssignment(String title, int score, String description) {

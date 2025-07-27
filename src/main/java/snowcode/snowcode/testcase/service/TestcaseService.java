@@ -36,6 +36,11 @@ public class TestcaseService {
         testcaseRepository.delete(testcase);
     }
 
+    @Transactional
+    public void deleteTestcaseWithAssignmentId(Long id) {
+        testcaseRepository.deleteAllByAssignmentId(id);
+    }
+
     public Testcase findById(Long id) {
         return testcaseRepository.findById(id).orElseThrow(
                 () -> new TestcaseException(TestcaseErrorCode.TESTCASE_NOT_FOUND)

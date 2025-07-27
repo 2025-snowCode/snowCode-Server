@@ -26,7 +26,7 @@ public class CourseService {
         int year = Validator.validYear(dto.year());
         Semester semester = Semester.valueOf(dto.semester());
 
-        Course course = Course.createCourse(dto.name(), dto.section(), year, semester, dto.description());
+        Course course = Course.createCourse(dto.title(), dto.section(), year, semester, dto.description());
         courseRepository.save(course);
         return course;
     }
@@ -42,7 +42,7 @@ public class CourseService {
         int year = Validator.validYear(dto.year());
         Semester semester = Semester.valueOf(dto.semester());
 
-        course.updateCourse(dto.name(), dto.section(), year, semester, dto.description());
+        course.updateCourse(dto.title(), dto.section(), year, semester, dto.description());
         return CourseResponse.from(course);
     }
 

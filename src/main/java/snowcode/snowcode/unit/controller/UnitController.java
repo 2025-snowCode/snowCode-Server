@@ -11,6 +11,7 @@ import snowcode.snowcode.unit.dto.UnitCountListResponse;
 import snowcode.snowcode.unit.dto.UnitRequest;
 import snowcode.snowcode.unit.dto.UnitResponse;
 import snowcode.snowcode.unit.service.UnitService;
+import snowcode.snowcode.unit.service.UnitWithAssignmentFacade;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,6 +20,7 @@ public class UnitController {
 
     private final UnitService unitService;
     private final CourseService courseService;
+    private final UnitWithAssignmentFacade unitWithAssignmentFacade;
 
     @PostMapping("/{courseId}")
     public BasicResponse<UnitResponse> createUnit(@PathVariable Long courseId, @Valid @RequestBody UnitRequest dto) {
@@ -33,12 +35,6 @@ public class UnitController {
         return ResponseUtil.success(unit);
     }
 
-    @GetMapping
-    public BasicResponse<UnitCountListResponse> findAllUnit() {
-        UnitCountListResponse unitCountListResponse = unitService.findAllUnit();
-        return ResponseUtil.success(unitCountListResponse);
-    }
-
     @PutMapping("/{unitId}")
     public BasicResponse<UnitResponse> updateUnit(@PathVariable Long unitId, @Valid @RequestBody UnitRequest dto) {
         UnitResponse unit = unitService.updateUnit(unitId, dto);
@@ -47,7 +43,7 @@ public class UnitController {
 
     @DeleteMapping("/{unitId}")
     public BasicResponse<String> deleteUnit (@PathVariable Long unitId) {
-        unitService.deleteUnit(unitId);
+        unitWithAssignmentFacade.deleteAllByUnitId(unitId);
         return ResponseUtil.success("단원 삭제에 성공하였습니다.");
     }
 }

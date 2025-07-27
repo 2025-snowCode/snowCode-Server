@@ -10,7 +10,7 @@ public record CourseListResponse(Long id, int year, String semester, String sect
                 course.getYear(),
                 course.getSemester().toString(),
                 course.getSection(),
-                course.getName(),
+                course.getTitle(),
                 course.getDescription(),
                 unitCount,
                 assignmentCount

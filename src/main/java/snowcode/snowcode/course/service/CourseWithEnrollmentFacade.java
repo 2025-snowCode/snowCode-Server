@@ -3,7 +3,7 @@ package snowcode.snowcode.course.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import snowcode.snowcode.assignment.service.AssignmentService;
+import snowcode.snowcode.assignmentRegistration.service.RegistrationService;
 import snowcode.snowcode.auth.domain.Member;
 import snowcode.snowcode.auth.domain.Role;
 import snowcode.snowcode.course.domain.Course;
@@ -15,6 +15,7 @@ import snowcode.snowcode.enrollment.domain.Enrollment;
 import snowcode.snowcode.enrollment.service.EnrollmentService;
 import snowcode.snowcode.student.service.StudentService;
 import snowcode.snowcode.unit.service.UnitService;
+import snowcode.snowcode.unit.service.UnitWithAssignmentFacade;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +29,9 @@ public class CourseWithEnrollmentFacade {
     private final CourseService courseService;
     private final EnrollmentService enrollmentService;
     private final UnitService unitService;
-    private final AssignmentService assignmentService;
     private final StudentService studentService;
+    private final RegistrationService registrationService;
+    private final UnitWithAssignmentFacade unitWithAssignmentFacade;
 
     public CourseResponse createCourseWithEnroll(Member member, CourseRequest dto) {
         Course course = courseService.createCourse(dto);
@@ -40,8 +42,10 @@ public class CourseWithEnrollmentFacade {
     }
 
     public void deleteCourseAndEnrollment(Long courseId) {
+        List<Long> unitIds = unitService.findIdsByCourseId(courseId);
+        registrationService.deleteAllByUnitIdIn(unitIds);
+        unitService.deleteAllById(unitIds);
         enrollmentService.deleteEnrollmentWithCourseId(courseId);
-        unitService.deleteUnitWithCourseId(courseId);
         courseService.deleteCourse(courseId);
     }
 
@@ -53,7 +57,7 @@ public class CourseWithEnrollmentFacade {
         List<Long> courseIds = courseService.extractCourseIds(courses);
 
         Map<Long, Integer> unitMap = unitService.countUnitsByCourseId(courseIds);
-        Map<Long, Integer> assignmentMap = assignmentService.countAssignmentsByCourseId(courseIds);
+        Map<Long, Integer> assignmentMap = registrationService.countAssignmentsByCourseId(courseIds);
 
         List<CourseListResponse> dtoList = new ArrayList<>();
         for (Course course : courses) {

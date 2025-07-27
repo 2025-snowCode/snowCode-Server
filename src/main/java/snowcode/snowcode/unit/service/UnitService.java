@@ -6,8 +6,6 @@ import org.springframework.transaction.annotation.Transactional;
 import snowcode.snowcode.common.DateTimeConverter;
 import snowcode.snowcode.course.domain.Course;
 import snowcode.snowcode.unit.domain.Unit;
-import snowcode.snowcode.unit.dto.UnitCountListResponse;
-import snowcode.snowcode.unit.dto.UnitListResponse;
 import snowcode.snowcode.unit.dto.UnitRequest;
 import snowcode.snowcode.unit.dto.UnitResponse;
 import snowcode.snowcode.unit.exception.UnitErrorCode;
@@ -44,13 +42,6 @@ public class UnitService {
         return UnitResponse.from(findUnit(id));
     }
 
-    public UnitCountListResponse findAllUnit() {
-        List<UnitListResponse> list = unitRepository.findAll().stream()
-                .map(UnitListResponse::from)
-                .toList();
-        return new UnitCountListResponse(list.size(), list);
-    }
-
     @Transactional
     public UnitResponse updateUnit(Long unitId, UnitRequest dto) {
         Unit unit = findUnit(unitId);
@@ -63,14 +54,13 @@ public class UnitService {
     }
 
     @Transactional
-    public void deleteUnit(Long unitId) {
-        Unit unit = findUnit(unitId);
-        unitRepository.delete(unit);
+    public void deleteAllById(List<Long> unitId) {
+        unitRepository.deleteAllById(unitId);
     }
 
     @Transactional
-    public void deleteUnitWithCourseId(Long courseId) {
-        unitRepository.deleteByCourseId(courseId);
+    public void deleteUnit(Long unitId) {
+        unitRepository.deleteById(unitId);
     }
 
     public Map<Long, Integer> countUnitsByCourseId(List<Long> courseIds) {
@@ -89,5 +79,13 @@ public class UnitService {
 
     public List<Unit> findAllByCourseId(Long courseId) {
         return unitRepository.findAllByCourseId(courseId);
+    }
+
+    public List<Long> findIdsByCourseId(Long courseId) {
+        return unitRepository.findIdByCourseId(courseId);
+    }
+
+    public List<Object[]> countAssignmentsByCourseId(Long courseId) {
+        return unitRepository.findUnitIdTitleAndAssignmentCount(courseId);
     }
 }

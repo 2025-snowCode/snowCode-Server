@@ -16,7 +16,7 @@ public class Course extends BaseTimeEntity {
     private Long id;
 
     @Column(nullable = false)
-    private String name;
+    private String title;
 
     @Column(nullable = false)
     private String section;
@@ -30,20 +30,20 @@ public class Course extends BaseTimeEntity {
 
     private String description;
 
-    private Course(String name, String section, int year, Semester semester, String description) {
-        this.name = name;
+    private Course(String title, String section, int year, Semester semester, String description) {
+        this.title = title;
         this.section = section;
         this.year = year;
         this.semester = semester;
         this.description = description;
     }
 
-    public static Course createCourse(String name, String section, int year, Semester semester, String description) {
-        return new Course(name, section, year, semester, description);
+    public static Course createCourse(String title, String section, int year, Semester semester, String description) {
+        return new Course(title, section, year, semester, description);
     }
 
-    public void updateCourse(String name, String section, int year, Semester semester, String description) {
-        this.name = name;
+    public void updateCourse(String title, String section, int year, Semester semester, String description) {
+        this.title = title;
         this.section = section;
         this.year = year;
         this.semester = semester;
