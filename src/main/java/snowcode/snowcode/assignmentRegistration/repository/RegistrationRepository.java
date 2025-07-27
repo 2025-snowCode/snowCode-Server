@@ -50,6 +50,16 @@ public interface RegistrationRepository extends JpaRepository<AssignmentRegistra
     """)
     List<Assignment> findAssignmentsByUnitId(@Param("unitId") Long unitId);
 
+    @Query("""
+        SELECT c, a.id, a.title
+        FROM AssignmentRegistration ar
+        JOIN ar.assignment a
+        JOIN ar.unit u
+        JOIN u.course c
+        WHERE c.id IN :courseIds
+    """)
+    List<Object[]> findAssignmentsByCourseId(@Param("courseIds") List<Long> courseIds);
+
     void deleteAllByAssignmentId(Long assignmentId);
     void deleteAllByUnitIdIn(List<Long> unitIds);
     void deleteAllByUnitId(Long unitId);

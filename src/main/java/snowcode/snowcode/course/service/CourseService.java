@@ -36,6 +36,12 @@ public class CourseService {
                 () -> new CourseException(CourseErrorCode.COURSE_NOT_FOUND));
     }
 
+    public List<Long> findCourseIdsWithTitle(Long memberId, Long courseId) {
+        Course course = findCourse(courseId);
+        String title = course.getTitle();
+        return courseRepository.findIdsByTitle(memberId, title);
+    }
+
     public CourseResponse updateCourse(Long id, CourseRequest dto) {
         Course course = findCourse(id);
 

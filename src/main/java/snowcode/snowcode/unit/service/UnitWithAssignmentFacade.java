@@ -86,12 +86,8 @@ public class UnitWithAssignmentFacade {
 
     public UnitWithAssignmentResponse findAllByUnitId(Long unitId) {
         Unit unit = unitService.findUnit(unitId);
-
         List<Assignment> assignments = registrationService.findAllByUnitId(unitId);
-        List<AssignmentSimpleResponse> assignmentList = assignments.stream()
-                .map(AssignmentSimpleResponse::from)
-                .toList();
-
+        List<AssignmentSimpleResponse> assignmentList = assignmentListToSimpleDto(assignments);
         return UnitWithAssignmentResponse.from(unit, assignmentList);
     }
 
@@ -113,5 +109,11 @@ public class UnitWithAssignmentFacade {
                 .toList();
 
         return new UnitCountListResponse(dtoList.size(), dtoList);
+    }
+
+    private List<AssignmentSimpleResponse> assignmentListToSimpleDto(List<Assignment> assignments) {
+        return assignments.stream()
+                .map(AssignmentSimpleResponse::from)
+                .toList();
     }
 }
