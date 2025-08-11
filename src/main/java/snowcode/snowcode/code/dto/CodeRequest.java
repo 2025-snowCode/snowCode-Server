@@ -1,4 +1,6 @@
 package snowcode.snowcode.code.dto;
 
-public record CodeRequest(String code, String language) {
+import jakarta.validation.constraints.NotBlank;
+
+public record CodeRequest(@NotBlank String code, @NotBlank String language) {
 }

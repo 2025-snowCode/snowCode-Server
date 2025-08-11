@@ -8,6 +8,7 @@ import snowcode.snowcode.course.domain.Course;
 import snowcode.snowcode.unit.domain.Unit;
 import snowcode.snowcode.unit.dto.UnitRequest;
 import snowcode.snowcode.unit.dto.UnitResponse;
+import snowcode.snowcode.unit.dto.UnitUpdateRequest;
 import snowcode.snowcode.unit.exception.UnitErrorCode;
 import snowcode.snowcode.unit.exception.UnitException;
 import snowcode.snowcode.unit.repository.UnitRepository;
@@ -39,7 +40,7 @@ public class UnitService {
     }
 
     @Transactional
-    public UnitResponse updateUnit(Long unitId, UnitRequest dto) {
+    public UnitResponse updateUnit(Long unitId, UnitUpdateRequest dto) {
         Unit unit = findUnit(unitId);
 
         LocalDate releaseDate = DateTimeConverter.stringToDate(dto.releaseDate());

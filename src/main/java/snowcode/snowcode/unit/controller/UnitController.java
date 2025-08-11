@@ -10,6 +10,7 @@ import snowcode.snowcode.course.domain.Course;
 import snowcode.snowcode.course.service.CourseService;
 import snowcode.snowcode.unit.dto.UnitRequest;
 import snowcode.snowcode.unit.dto.UnitResponse;
+import snowcode.snowcode.unit.dto.UnitUpdateRequest;
 import snowcode.snowcode.unit.dto.UnitWithAssignmentResponse;
 import snowcode.snowcode.unit.service.UnitService;
 import snowcode.snowcode.unit.service.UnitWithAssignmentFacade;
@@ -38,7 +39,7 @@ public class UnitController {
     }
 
     @PutMapping("/{unitId}")
-    public BasicResponse<UnitResponse> updateUnit(@PathVariable Long unitId, @Valid @RequestBody UnitRequest dto) {
+    public BasicResponse<UnitResponse> updateUnit(@PathVariable Long unitId, @Valid @RequestBody UnitUpdateRequest dto) {
         UnitResponse unit = unitService.updateUnit(unitId, dto);
         return ResponseUtil.success(unit);
     }
