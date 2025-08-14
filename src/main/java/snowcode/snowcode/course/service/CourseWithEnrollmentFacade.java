@@ -59,6 +59,11 @@ public class CourseWithEnrollmentFacade {
         courseService.deleteCourse(courseId);
     }
 
+    public void deleteStudentWithEnrollment(Long courseId, Long memberId) {
+        Enrollment enrollment = enrollmentService.findByMemberIdAndCourseId(courseId, memberId);
+        enrollmentService.deleteEnrollment(enrollment);
+    }
+
 
     @Transactional(readOnly = true)
     public CourseCountListResponse findMyCourses(Long memberId) {

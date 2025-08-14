@@ -49,6 +49,10 @@ public class EnrollmentService {
         return enrollmentRepository.findByCourseIdAndMemberId(courseId, memberId).isPresent();
     }
 
+    public void deleteEnrollment(Enrollment enrollment) {
+        enrollmentRepository.delete(enrollment);
+    }
+
     public void deleteEnrollmentWithCourseId(Long courseId) {
         enrollmentRepository.deleteByCourseId(courseId);
     }
@@ -68,6 +72,13 @@ public class EnrollmentService {
     @Transactional(readOnly = true)
     public List<Enrollment> findByCourseId(Long courseId) {
         return enrollmentRepository.findAllByCourseId(courseId);
+    }
+
+    @Transactional(readOnly = true)
+    public Enrollment findByMemberIdAndCourseId(Long courseId, Long memberId) {
+        return enrollmentRepository.findByCourseIdAndMemberId(courseId, memberId).orElseThrow(
+                () -> new EnrollmentException(EnrollmentErrorCode.ENROLLMENT_NOT_FOUND)
+        );
     }
 
     @Transactional(readOnly = true)

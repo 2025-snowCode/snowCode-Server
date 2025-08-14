@@ -20,4 +20,10 @@ public class CourseWithStudentController {
         courseWithEnrollmentFacade.addStudentWithEnroll(courseId, dto);
         return ResponseUtil.success("학생 추가에 성공하였습니다.");
     }
+
+    @DeleteMapping("/{courseId}/enrollments/{memberId}")
+    public BasicResponse<String> deleteStudentWithEnrollment(@PathVariable Long courseId, @PathVariable Long memberId) {
+        courseWithEnrollmentFacade.deleteStudentWithEnrollment(courseId, memberId);
+        return ResponseUtil.success("학생 삭제에 성공하였습니다.");
+    }
 }
