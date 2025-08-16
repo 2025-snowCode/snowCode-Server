@@ -50,6 +50,11 @@ public interface RegistrationRepository extends JpaRepository<AssignmentRegistra
     """)
     List<Assignment> findAssignmentsByUnitId(@Param("unitId") Long unitId);
 
+//    @Query("""
+//        SELECT u,
+//    """)
+//    List<Object[]> findAssignmentsByUnitIds(@Param("unitIds") List<Long> unitIds);
+
     @Query("""
         SELECT c, a.id, a.title
         FROM AssignmentRegistration ar

@@ -35,13 +35,6 @@ public class AssignmentService {
         );
     }
 
-    public AssignmentCountListResponse findAllAssignment() {
-        List<AssignmentListResponse> lst = assignmentRepository.findAll().stream()
-                .map(AssignmentListResponse::from)
-                .toList();
-        return new AssignmentCountListResponse(lst.size(), lst);
-    }
-
     public List<Assignment> findAllAssignmentById(List<Long> assignmentIds) {
         return assignmentRepository.findAllById(assignmentIds);
     }

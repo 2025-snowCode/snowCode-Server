@@ -3,10 +3,16 @@ package snowcode.snowcode.course.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import snowcode.snowcode.auth.domain.Member;
+import snowcode.snowcode.auth.service.MemberService;
 import snowcode.snowcode.common.response.BasicResponse;
 import snowcode.snowcode.common.response.ResponseUtil;
 import snowcode.snowcode.course.service.CourseWithEnrollmentFacade;
+import snowcode.snowcode.student.dto.StudentProgressListResponse;
 import snowcode.snowcode.student.dto.StudentRequest;
+import snowcode.snowcode.unit.service.UnitProgressFacade;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -14,11 +20,20 @@ import snowcode.snowcode.student.dto.StudentRequest;
 public class CourseWithStudentController {
 
     private final CourseWithEnrollmentFacade courseWithEnrollmentFacade;
+    private final UnitProgressFacade unitProgressFacade;
+    private final MemberService memberService;
 
     @PostMapping("/{courseId}/enrollments")
     public BasicResponse<String> addStudent(@PathVariable Long courseId, @Valid @RequestBody StudentRequest dto) {
         courseWithEnrollmentFacade.addStudentWithEnroll(courseId, dto);
         return ResponseUtil.success("학생 추가에 성공하였습니다.");
+    }
+
+    @GetMapping("/{courseId}/enrollments")
+    public BasicResponse<StudentProgressListResponse> findAllStudentWithStatus(@PathVariable Long courseId) {
+        List<Member> members = courseWithEnrollmentFacade.findNonAdminByCourseId(courseId);
+        StudentProgressListResponse students = unitProgressFacade.findAllStudents(members, courseId);
+        return ResponseUtil.success(students);
     }
 
     @DeleteMapping("/{courseId}/enrollments/{memberId}")

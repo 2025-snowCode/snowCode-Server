@@ -34,12 +34,6 @@ public class AssignmentController {
         return ResponseUtil.success(assignmentInfo);
     }
 
-    @GetMapping
-    public BasicResponse<AssignmentCountListResponse> findAllAssignment() {
-        AssignmentCountListResponse assignments = assignmentService.findAllAssignment();
-        return ResponseUtil.success(assignments);
-    }
-
     @GetMapping("/{memberId}/schedule")
     public BasicResponse<RegistrationScheduleResponse> listUpMySchedule(@PathVariable Long memberId) {
         RegistrationScheduleResponse assignments = registrationScheduleService.listUpMySchedule(memberId);

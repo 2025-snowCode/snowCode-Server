@@ -34,15 +34,7 @@ public class CourseWithMemberFacade {
             unitDtoList.add(unitWithAssignmentFacade.createStudentUnitResponse(memberId, unit.getId()));
         }
 
-        return new CourseDetailStudentResponse(
-                courseId,
-                course.getTitle(),
-                course.getYear(),
-                course.getSemester().toString(),
-                course.getSection(),
-                unitDtoList.size(),
-                unitDtoList
-        );
+        return CourseDetailStudentResponse.of(course, unitDtoList);
     }
 
     public CourseDetailAdminResponse createAdminCourseResponse(Long courseId) {
@@ -57,15 +49,6 @@ public class CourseWithMemberFacade {
 
         int size = courseWithEnrollmentFacade.findNonAdminByCourseId(courseId).size();
 
-        return new CourseDetailAdminResponse(
-                courseId,
-                course.getTitle(),
-                course.getYear(),
-                course.getSemester().toString(),
-                course.getSection(),
-                size,
-                unitDtoList.size(),
-                unitDtoList
-        );
+        return CourseDetailAdminResponse.of(course, size, unitDtoList);
     }
 }
