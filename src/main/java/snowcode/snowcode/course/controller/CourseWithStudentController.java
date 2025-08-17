@@ -13,6 +13,7 @@ import snowcode.snowcode.student.dto.StudentRequest;
 import snowcode.snowcode.unit.service.UnitProgressFacade;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -30,8 +31,11 @@ public class CourseWithStudentController {
     }
 
     @GetMapping("/{courseId}/enrollments")
-    public BasicResponse<StudentProgressListResponse> findAllStudentWithStatus(@PathVariable Long courseId) {
-        List<Member> members = courseWithEnrollmentFacade.findNonAdminByCourseId(courseId);
+    public BasicResponse<StudentProgressListResponse> findAllStudentWithStatus(
+            @PathVariable Long courseId,
+            @RequestParam(required = false) String studentId) {
+
+        List<Member> members = memberService.findNonAdmin(courseId, studentId);
         StudentProgressListResponse students = unitProgressFacade.findAllStudents(members, courseId);
         return ResponseUtil.success(students);
     }

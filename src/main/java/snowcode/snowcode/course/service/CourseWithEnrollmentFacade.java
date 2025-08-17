@@ -82,16 +82,4 @@ public class CourseWithEnrollmentFacade {
         }
         return new CourseCountListResponse(dtoList.size(), dtoList);
     }
-
-    @Transactional(readOnly = true)
-    public List<Member> findNonAdminByCourseId(Long courseId) {
-        List<Enrollment> enrollmentList = enrollmentService.findByCourseId(courseId);
-        List<Member> members = new ArrayList<>();
-
-        for (Enrollment e : enrollmentList) {
-            Member member = e.getMember();
-            if (!member.getRole().equals(Role.ADMIN)) members.add(member);
-        }
-        return members;
-    }
 }

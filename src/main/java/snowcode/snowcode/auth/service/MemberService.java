@@ -1,5 +1,6 @@
 package snowcode.snowcode.auth.service;
 
+import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +12,7 @@ import snowcode.snowcode.auth.exception.AuthException;
 import snowcode.snowcode.auth.repository.MemberRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -49,4 +51,26 @@ public class MemberService {
 
         return new MemberCountListResponse(lst.size(), lst);
     }
+
+    @Transactional(readOnly = true)
+    public List<Member> findNonAdmin(Long courseId, @Nullable String studentId) {
+
+        if (studentId == null || studentId.isBlank()) {
+            return findNonAdminByCourseId(courseId);
+        }
+        return findNonAdminByCourseIdAndStudentId(courseId, studentId)
+                .map(List::of)
+                .orElseGet(List::of);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Member> findNonAdminByCourseId(Long courseId) {
+        return memberRepository.findNonAdminByCourseId(courseId, Role.ADMIN);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<Member> findNonAdminByCourseIdAndStudentId(Long courseId, String studentId) {
+        return memberRepository.findNonAdminByCourseIdAndStudentId(courseId, studentId, Role.ADMIN);
+    }
+
 }
