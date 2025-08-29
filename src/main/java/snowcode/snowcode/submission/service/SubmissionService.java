@@ -30,6 +30,7 @@ public class SubmissionService {
     public Optional<Submission> isSubmitted(Long memberId, AssignmentRegistration registration) {
         List<Submission> submissions = submissionRepository.findByMemberIdAndAssignmentRegistrationId(memberId, registration.getId());
 
+        // FIXME - 제출 점수 중 가장 높은 부분
         return submissions.stream()
                 .max(Comparator.comparingInt(Submission::getScore));
     }

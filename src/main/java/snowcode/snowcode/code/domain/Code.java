@@ -24,7 +24,7 @@ public class Code {
     @Column(nullable = false)
     private Language language;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "submission_id")
     private Submission submission;
 

@@ -23,7 +23,6 @@ public class CourseWithMemberFacade {
     private final CourseService courseService;
     private final UnitService unitService;
     private final UnitWithAssignmentFacade unitWithAssignmentFacade;
-    private final CourseWithEnrollmentFacade courseWithEnrollmentFacade;
     private final MemberService memberService;
 
     public CourseDetailStudentResponse createStudentCourseResponse(Long memberId, Long courseId) {

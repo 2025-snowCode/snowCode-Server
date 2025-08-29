@@ -10,6 +10,7 @@ import snowcode.snowcode.common.response.ResponseUtil;
 import snowcode.snowcode.course.service.CourseWithEnrollmentFacade;
 import snowcode.snowcode.student.dto.StudentProgressListResponse;
 import snowcode.snowcode.student.dto.StudentRequest;
+import snowcode.snowcode.student.dto.StudentResponse;
 import snowcode.snowcode.unit.service.UnitProgressFacade;
 
 import java.util.List;
@@ -38,6 +39,12 @@ public class CourseWithStudentController {
         List<Member> members = memberService.findNonAdmin(courseId, studentId);
         StudentProgressListResponse students = unitProgressFacade.findAllStudents(members, courseId);
         return ResponseUtil.success(students);
+    }
+
+    @GetMapping("/{courseId}/enrollments/{memberId}")
+    public BasicResponse<StudentResponse> findStudentWithStatus(@PathVariable Long courseId, @PathVariable Long memberId) {
+        StudentResponse student = unitProgressFacade.findStudentsWithCourse(memberId, courseId);
+        return ResponseUtil.success(student);
     }
 
     @DeleteMapping("/{courseId}/enrollments/{memberId}")
