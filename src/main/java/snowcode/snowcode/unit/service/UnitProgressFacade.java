@@ -15,8 +15,7 @@ import snowcode.snowcode.student.dto.StudentProgressListResponse;
 import snowcode.snowcode.student.dto.StudentProgressResponse;
 import snowcode.snowcode.student.dto.StudentResponse;
 import snowcode.snowcode.submission.domain.Submission;
-import snowcode.snowcode.submission.dto.SubmissionScore;
-import snowcode.snowcode.submission.service.SubmissionService;
+import snowcode.snowcode.submission.service.SubmissionScoreService;
 import snowcode.snowcode.unit.domain.Unit;
 import snowcode.snowcode.unit.domain.UnitAssignmentStatus;
 import snowcode.snowcode.unit.dto.UnitProgressResponse;
@@ -32,7 +31,7 @@ public class UnitProgressFacade {
 
     private final UnitService unitService;
     private final RegistrationService registrationService;
-    private final SubmissionService submissionService;
+    private final SubmissionScoreService submissionScoreService;
     private final CourseService courseService;
     private final MemberService memberService;
 
@@ -47,10 +46,9 @@ public class UnitProgressFacade {
         Map<Long, Integer> unitTotalScore = calculateUnitTotalScores(units, regsByUnit);
 
         // 3. 현재 제출 점수 (member, registration 별 최고 점수) 조회
-        Map<Long, Map<Long, Integer>> bestScoreByMemberAndReg = loadBestScores(members, regsByUnit);
+        Map<Long, Map<Long, Integer>> bestScoreByMemberAndReg = submissionScoreService.loadScores(members, regsByUnit);
 
         // 4. 학생별 진행도 계산
-        // FIXME - 학생별 진행도 계산 로직 수정 필요
         List<StudentProgressResponse> studentResponses = buildStudentProgress(
                 members, units, unitTotalScore, regsByUnit, bestScoreByMemberAndReg);
 
@@ -70,11 +68,9 @@ public class UnitProgressFacade {
         // 2. 유닛별 총점 계산 (제출하지 않은 과제까지 모두 고려)
         Map<Long, Integer> unitTotalScore = calculateUnitTotalScores(units, regsByUnit);
 
-        // FIXME
         List<Member> members = new ArrayList<>();
         members.add(student);
-
-        Map<Long, Map<Long, Integer>> bestScoreByMemberAndReg = loadBestScores(members, regsByUnit);
+        Map<Long, Map<Long, Integer>> bestScoreByMemberAndReg = submissionScoreService.loadScores(members, regsByUnit);
 
         Map<Long, Integer> bestScore = bestScoreByMemberAndReg.get(memberId);
         return buildStudentProgress(student, course, units, unitTotalScore, regsByUnit, bestScore, unitDtoList);
@@ -89,15 +85,13 @@ public class UnitProgressFacade {
                 Assignment assignment = registration.getAssignment();
 
                 // submission 찾기
-                // FIXME - submission 찾기 (최신 및 정답 여부에 따른 로직 추가 필요, 현재는 최신만 적용)
                 Long submittedId = 0L;
                 int score = 0;
-                Optional<Submission> submitted = submissionService.isSubmitted(student.getId(), registration);
+                Optional<Submission> submitted = submissionScoreService.isSubmitted(student.getId(), registration);
                 if (submitted.isPresent()) {
                     submittedId = submitted.get().getId();
                     score = submitted.get().getScore();
                 }
-                // 이거 넣기
                 assignments.add(AssignmentWithScoreResponse.of(assignment, score, submittedId));
             }
             unitList.add(UnitWithAssignmentScoreResponse.of(unit, assignments));
@@ -125,30 +119,6 @@ public class UnitProgressFacade {
                     .mapToInt(ar -> ar.getAssignment().getScore())
                     .sum();
             result.put(u.getId(), sum);
-        }
-        return result;
-    }
-
-    private Map<Long, Map<Long, Integer>> loadBestScores(
-            List<Member> members,
-            Map<Long, List<AssignmentRegistration>> regsByUnit) {
-
-        List<Long> memberIds = members.stream().map(Member::getId).toList();
-        List<Long> regIds = regsByUnit.values().stream()
-                .flatMap(List::stream)
-                .map(AssignmentRegistration::getId)
-                .toList();
-
-        if (memberIds.isEmpty() || regIds.isEmpty()) {
-            return Map.of();
-        }
-
-        List<SubmissionScore> scores = submissionService.findMaxScoreByMemberIdsAndRegsIds(memberIds, regIds);
-
-        Map<Long, Map<Long, Integer>> result = new HashMap<>();
-        for (SubmissionScore ss : scores) {
-            result.computeIfAbsent(ss.memberId(), k -> new HashMap<>())
-                    .put(ss.registrationId(), ss.maxScore());
         }
         return result;
     }
@@ -206,13 +176,13 @@ public class UnitProgressFacade {
 
         int totalScore = unitTotalScore.values().stream().mapToInt(Integer::intValue).sum();
         int courseStudentScore = 0;
+        Map<Long, Integer> myScores = bestScore != null ? bestScore : Map.of();
 
         for (Unit u : units) {
             int unitScore = 0;
             boolean isSubmitted = false;
-
             for (AssignmentRegistration ar : regsByUnit.getOrDefault(u.getId(), List.of())) {
-                Integer pts = bestScore.get(ar.getId());
+                Integer pts = myScores.get(ar.getId());
                 if (pts != null) {
                     unitScore += pts;
                     isSubmitted = true;

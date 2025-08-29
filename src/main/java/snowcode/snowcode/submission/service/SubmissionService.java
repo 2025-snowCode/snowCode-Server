@@ -9,9 +9,7 @@ import snowcode.snowcode.submission.domain.Submission;
 import snowcode.snowcode.submission.dto.SubmissionScore;
 import snowcode.snowcode.submission.repository.SubmissionRepository;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -27,19 +25,16 @@ public class SubmissionService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<Submission> isSubmitted(Long memberId, AssignmentRegistration registration) {
-        List<Submission> submissions = submissionRepository.findByMemberIdAndAssignmentRegistrationId(memberId, registration.getId());
-
-        // FIXME - 제출 점수 중 가장 높은 부분
-        return submissions.stream()
-                .max(Comparator.comparingInt(Submission::getScore));
-    }
-
-    @Transactional(readOnly = true)
     public List<Long> findAllByRegistrationId(Long registrationId) {
         return submissionRepository.findIdsByRegistrationId(registrationId);
     }
 
+    @Transactional(readOnly = true)
+    public List<Submission> findByMemberIdAndAssignmentRegistrationId(Long memberId, Long regId) {
+        return submissionRepository.findByMemberIdAndAssignmentRegistrationId(memberId, regId);
+    }
+
+    @Transactional(readOnly = true)
     public List<SubmissionScore> findMaxScoreByMemberIdsAndRegsIds(List<Long> memberIds, List<Long> regIds) {
         return submissionRepository.findMaxScoresByMemberIdsAndRegistrationIds(memberIds, regIds);
     }
