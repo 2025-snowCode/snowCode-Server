@@ -28,7 +28,7 @@ public class TestcaseController {
     @Operation(summary = "테스트케이스 추가 API", description = "테스트케이스 추가 (사용 X)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "테스트케이스 추가 성공",
-                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = BasicResponse.class))}),
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = TestcaseResponse.class))}),
             @ApiResponse(responseCode = "400", description = "BAD_INPUT",
                     content = {@Content(schema = @Schema(implementation = BasicResponse.class))}),
             @ApiResponse(responseCode = "404", description = "과제가 존재하지 않습니다.",
@@ -44,7 +44,7 @@ public class TestcaseController {
     @Operation(summary = "테스트케이스 삭제 API", description = "사용 여부 불확실함")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "테스트케이스 삭제 성공",
-                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = BasicResponse.class))}),
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = String.class))}),
             @ApiResponse(responseCode = "404", description = "테스트케이스가 존재하지 않습니다.",
                     content = {@Content(schema = @Schema(implementation = BasicResponse.class))}),
     })

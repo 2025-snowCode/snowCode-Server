@@ -25,7 +25,7 @@ public class CodeController {
     @Operation(summary = "코드 조회 API", description = "코드 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "코드 조회 성공",
-                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = BasicResponse.class))}),
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = CodeResponse.class))}),
             @ApiResponse(responseCode = "404", description = "코드를 찾을 수 없습니다.",
                     content = {@Content(schema = @Schema(implementation = BasicResponse.class))}),
     })

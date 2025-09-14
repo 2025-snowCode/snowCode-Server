@@ -31,7 +31,7 @@ public class AssignmentController {
     @Operation(summary = "과제 추가 API", description = "과제 추가")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "과제 추가 성공",
-                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = BasicResponse.class))}),
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = AssignmentInfoResponse.class))}),
             @ApiResponse(responseCode = "400", description = "BAD_INPUT",
                     content = {@Content(schema = @Schema(implementation = BasicResponse.class))}),
     })
@@ -44,7 +44,7 @@ public class AssignmentController {
     @Operation(summary = "과제 조회 API", description = "과제 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "과제 조회 성공 (코드 화면에서 과제 조회)",
-                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = BasicResponse.class))}),
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = AssignmentInfoResponse.class))}),
             @ApiResponse(responseCode = "404", description = "과제가 존재하지 않습니다",
                     content = {@Content(schema = @Schema(implementation = BasicResponse.class))}),
     })
@@ -57,7 +57,7 @@ public class AssignmentController {
     @Operation(summary = "일정 리스트업 API", description = "해야 할 과제 리스트 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "일정 리스트업 성공",
-                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = BasicResponse.class))}),
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = RegistrationScheduleResponse.class))}),
     })
     public BasicResponse<RegistrationScheduleResponse> listUpMySchedule(@PathVariable Long memberId) {
         RegistrationScheduleResponse assignments = registrationScheduleService.listUpMySchedule(memberId);
@@ -68,7 +68,7 @@ public class AssignmentController {
     @Operation(summary = "과제 수정 API", description = "과제 수정")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "과제 수정 성공",
-                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = BasicResponse.class))}),
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = AssignmentInfoResponse.class))}),
             @ApiResponse(responseCode = "400", description = "BAD_INPUT",
                     content = {@Content(schema = @Schema(implementation = BasicResponse.class))}),
             @ApiResponse(responseCode = "404", description = "과제가 존재하지 않습니다.",
@@ -83,7 +83,7 @@ public class AssignmentController {
     @Operation(summary = "과제 삭제 API", description = "과제 삭제 (관련 연결된 과제, 제출 코드 등 모두 삭제)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "과제 삭제 성공",
-                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = BasicResponse.class))}),
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = String.class))}),
             @ApiResponse(responseCode = "404", description = "과제가 존재하지 않습니다",
                     content = {@Content(schema = @Schema(implementation = BasicResponse.class))}),
     })

@@ -6,8 +6,11 @@ import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.Schema;
+import org.springdoc.core.customizers.OpenApiCustomizer;
+import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.method.HandlerMethod;
 
 @Configuration
 public class SwaggerConfig {
@@ -35,6 +38,18 @@ public class SwaggerConfig {
         };
     }
 
+    @Bean
+    public OpenApiCustomizer openApiCustomizer(OperationCustomizer myOperationCustomizer) {
+        return openApi -> openApi.getPaths().forEach((path, pathItem) ->
+                pathItem.readOperations().forEach(operation -> {
+                    HandlerMethod handlerMethod = null; // 필요 없으면 null
+                    myOperationCustomizer.customize(operation, handlerMethod);
+                })
+        );
+    }
+
+
+
     private void addSchema(Operation operation) {
         final Content content = operation.getResponses().get("200").getContent();
         if (content != null) {
@@ -50,7 +65,7 @@ public class SwaggerConfig {
         final Schema<?> wrapperSchema = new Schema<>();
 
         wrapperSchema.addProperty("success", new Schema<>().type("boolean").example(true));
-        wrapperSchema.addProperty("responses", originalSchema);
+        wrapperSchema.addProperty("response", originalSchema);
 
         return wrapperSchema;
     }

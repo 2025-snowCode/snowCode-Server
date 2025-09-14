@@ -33,7 +33,7 @@ public class CourseWithStudentController {
     @Operation(summary = "학생 등록 API", description = "학생 등록")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "학생 등록 성공",
-                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = BasicResponse.class))}),
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = String.class))}),
             @ApiResponse(responseCode = "400", description = "BAD_INPUT",
                     content = {@Content(schema = @Schema(implementation = BasicResponse.class))}),
             @ApiResponse(responseCode = "404", description = "학생을 찾을 수 없습니다.",
@@ -50,7 +50,7 @@ public class CourseWithStudentController {
     @Operation(summary = "학생 전체 조회 API", description = "수강 중인 학생 전체 조회 (검색-필터링 가능)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "학생 전체 조회 성공",
-                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = BasicResponse.class))}),
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = StudentProgressListResponse.class))}),
 
     })
     public BasicResponse<StudentProgressListResponse> findAllStudentWithStatus(
@@ -66,7 +66,7 @@ public class CourseWithStudentController {
     @Operation(summary = "학생 조회 API", description = "학생 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "학생 조회 성공",
-                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = BasicResponse.class))}),
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = StudentResponse.class))}),
 
     })
     public BasicResponse<StudentResponse> findStudentWithStatus(@PathVariable Long courseId, @PathVariable Long memberId) {
@@ -78,7 +78,7 @@ public class CourseWithStudentController {
     @Operation(summary = "학생 삭제 API", description = "수강 중인 학생 삭제 (멤버 자체는 삭제 X)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "학생 삭제 성공",
-                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = BasicResponse.class))}),
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = String.class))}),
             @ApiResponse(responseCode = "404", description = "수강 정보가 존재하지 않습니다. (학생이 수강에 등록되어 있지 않은 경우)",
                     content = {@Content(schema = @Schema(implementation = BasicResponse.class))}),
     })

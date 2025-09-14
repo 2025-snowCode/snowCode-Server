@@ -30,7 +30,7 @@ public class SubmissionController {
     @Operation(summary = "코드 제출 API", description = "코드 제출")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "코드 제출 성공",
-                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = BasicResponse.class))}),
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = SubmissionResponse.class))}),
     })
     public BasicResponse<SubmissionResponse> createSubmission(@PathVariable Long memberId, @PathVariable Long unitId, @PathVariable Long assignmentId, @RequestBody CodeRequest dto) {
         Member member = memberService.findMember(memberId);
