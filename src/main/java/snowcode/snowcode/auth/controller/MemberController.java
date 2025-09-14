@@ -28,7 +28,7 @@ public class MemberController {
     @Operation(summary = "회원가입 API", description = "회원가입 (임시)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "회원가입 성공",
-                    content = {@Content(schema = @Schema(implementation = BasicResponse.class))}),
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = BasicResponse.class))}),
             @ApiResponse(responseCode = "400", description = "BAD_INPUT",
                     content = {@Content(schema = @Schema(implementation = BasicResponse.class))}),
             @ApiResponse(responseCode = "400", description = "role에 USER, ADMIN이 아닌 다른 것을 넣은 경우",
@@ -40,6 +40,13 @@ public class MemberController {
     }
 
     @GetMapping("/me/{memberId}")
+    @Operation(summary = "내 정보 조회 API", description = "내 정보 조회 (이름)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "내 정보 조회 성공",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = BasicResponse.class))}),
+            @ApiResponse(responseCode = "404", description = "회원을 찾을 수 없습니다",
+                    content = {@Content(schema = @Schema(implementation = BasicResponse.class))}),
+    })
     public BasicResponse<MyProfileResponse> findMember(@Schema(description = "memberId", example = "1")
                                                            @PathVariable Long memberId) {
         MyProfileResponse myProfileResponse = memberService.findMemberById(memberId);
@@ -47,12 +54,22 @@ public class MemberController {
     }
 
     @GetMapping
+    @Operation(summary = "회원 전체 조회", description = "회원 전체 조회 API")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "회원 전체 조회 성공",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = BasicResponse.class))}),
+    })
     public BasicResponse<MemberCountListResponse> findAllMember() {
         MemberCountListResponse dto = memberService.findAllMember();
         return ResponseUtil.success(dto);
     }
 
     @PostMapping("/{memberId}/students")
+    @Operation(summary = "학번 입력", description = "학번 입력 (사용 X)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "학번 업데이트 성공",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = BasicResponse.class))}),
+    })
     public BasicResponse<AddProfileResponse> updateStudentId(@PathVariable Long memberId, @Valid @RequestBody AddProfileRequest dto) {
         Member member = memberService.findMember(memberId);
         AddProfileResponse addProfileResponse = memberService.updateStudentId(member, dto.studentId());

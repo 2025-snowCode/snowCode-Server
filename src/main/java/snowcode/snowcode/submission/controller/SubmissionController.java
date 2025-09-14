@@ -1,5 +1,10 @@
 package snowcode.snowcode.submission.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import snowcode.snowcode.assignmentRegistration.domain.AssignmentRegistration;
@@ -22,6 +27,11 @@ public class SubmissionController {
     private final RegistrationService registrationService;
 
     @PostMapping("/{memberId}/{unitId}/{assignmentId}/code")
+    @Operation(summary = "코드 제출 API", description = "코드 제출")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "코드 제출 성공",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = BasicResponse.class))}),
+    })
     public BasicResponse<SubmissionResponse> createSubmission(@PathVariable Long memberId, @PathVariable Long unitId, @PathVariable Long assignmentId, @RequestBody CodeRequest dto) {
         Member member = memberService.findMember(memberId);
         AssignmentRegistration assignmentRegistration = registrationService.findByUnitIdAndAssignmentId(unitId, assignmentId);

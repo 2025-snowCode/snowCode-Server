@@ -1,5 +1,10 @@
 package snowcode.snowcode.testcase.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +25,15 @@ public class TestcaseController {
     private final AssignmentService assignmentService;
 
     @PostMapping("{assignmentId}")
+    @Operation(summary = "테스트케이스 추가 API", description = "테스트케이스 추가 (사용 X)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "테스트케이스 추가 성공",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = BasicResponse.class))}),
+            @ApiResponse(responseCode = "400", description = "BAD_INPUT",
+                    content = {@Content(schema = @Schema(implementation = BasicResponse.class))}),
+            @ApiResponse(responseCode = "404", description = "과제가 존재하지 않습니다.",
+                    content = {@Content(schema = @Schema(implementation = BasicResponse.class))}),
+    })
     public BasicResponse<TestcaseResponse> createTestcase(@PathVariable Long assignmentId, @Valid @RequestBody TestcaseRequest dto) {
         Assignment assignment = assignmentService.findById(assignmentId);
         TestcaseResponse testcase = testcaseService.createTestcase(assignment, dto);
@@ -27,6 +41,13 @@ public class TestcaseController {
     }
 
     @DeleteMapping("{id}")
+    @Operation(summary = "테스트케이스 삭제 API", description = "사용 여부 불확실함")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "테스트케이스 삭제 성공",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = BasicResponse.class))}),
+            @ApiResponse(responseCode = "404", description = "테스트케이스가 존재하지 않습니다.",
+                    content = {@Content(schema = @Schema(implementation = BasicResponse.class))}),
+    })
     public BasicResponse<String> deleteTestcase(@PathVariable Long id) {
         testcaseService.deleteTestcase(id);
         return ResponseUtil.success("테스트케이스 삭제에 성공하였습니다.");
