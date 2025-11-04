@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,7 @@ import snowcode.snowcode.common.response.ResponseUtil;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/assignments")
+@Tag(name = "과제", description = "Assignment API")
 public class AssignmentController {
 
     private final AssignmentDeleteFacade assignmentDeleteFacade;
@@ -32,8 +34,8 @@ public class AssignmentController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "과제 추가 성공",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = AssignmentInfoResponse.class))}),
-            @ApiResponse(responseCode = "400", description = "BAD_INPUT",
-                    content = {@Content(schema = @Schema(implementation = BasicResponse.class))}),
+//            @ApiResponse(responseCode = "400", description = "BAD_INPUT",
+//                    content = {@Content(schema = @Schema(implementation = BasicResponse.class))}),
     })
     public BasicResponse<AssignmentInfoResponse> createAssignment(@Valid @RequestBody AssignmentCreateWithTestcaseRequest dto) {
         AssignmentInfoResponse assignment = assignmentWithTestcaseFacade.createAssignment(dto);
@@ -83,7 +85,7 @@ public class AssignmentController {
     @Operation(summary = "과제 삭제 API", description = "과제 삭제 (관련 연결된 과제, 제출 코드 등 모두 삭제)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "과제 삭제 성공",
-                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = String.class))}),
+                    content = {@Content(mediaType = "application/json")}),
             @ApiResponse(responseCode = "404", description = "과제가 존재하지 않습니다",
                     content = {@Content(schema = @Schema(implementation = BasicResponse.class))}),
     })

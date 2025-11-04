@@ -7,7 +7,7 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.Schema;
 import org.springdoc.core.customizers.OpenApiCustomizer;
-import org.springdoc.core.models.GroupedOpenApi;
+import org.springdoc.core.customizers.OperationCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.HandlerMethod;
@@ -32,40 +32,37 @@ public class SwaggerConfig {
 
     @Bean
     public OperationCustomizer operationCustomizer() {
-        return (operation, handlerMethod) -> {
-            this.addSchema(operation);
+        return (Operation operation, HandlerMethod handlerMethod) -> {
+            addResponseBodyWrapperSchemaExample(operation);
             return operation;
         };
     }
 
-    @Bean
-    public OpenApiCustomizer openApiCustomizer(OperationCustomizer myOperationCustomizer) {
-        return openApi -> openApi.getPaths().forEach((path, pathItem) ->
-                pathItem.readOperations().forEach(operation -> {
-                    HandlerMethod handlerMethod = null; // 필요 없으면 null
-                    myOperationCustomizer.customize(operation, handlerMethod);
-                })
-        );
-    }
+    private void addResponseBodyWrapperSchemaExample(Operation operation) {
+        if (operation.getResponses() != null
+                && operation.getResponses().get("200") != null
+                && operation.getResponses().get("200").getContent() != null) {
 
+            Content content = operation.getResponses().get("200").getContent();
 
-
-    private void addSchema(Operation operation) {
-        final Content content = operation.getResponses().get("200").getContent();
-        if (content != null) {
             content.forEach((mediaTypeKey, mediaType) -> {
                 Schema<?> originalSchema = mediaType.getSchema();
-                Schema<?> wrappedSchema = wrapSchema(originalSchema);
-                mediaType.setSchema(wrappedSchema);
+                if (originalSchema != null) {
+                    Schema<?> wrapperSchema = wrapSchema(originalSchema);
+                    mediaType.setSchema(wrapperSchema);
+                }
             });
         }
     }
 
     private Schema<?> wrapSchema(Schema<?> originalSchema) {
-        final Schema<?> wrapperSchema = new Schema<>();
+        Schema<Object> wrapperSchema = new Schema<>();
 
-        wrapperSchema.addProperty("success", new Schema<>().type("boolean").example(true));
-        wrapperSchema.addProperty("response", originalSchema);
+        wrapperSchema.addProperty("status",
+                new Schema<>().type("string").example("OK"));
+        wrapperSchema.addProperty("message",
+                new Schema<>().type("string").example("OK"));
+        wrapperSchema.addProperty("data", originalSchema);
 
         return wrapperSchema;
     }
