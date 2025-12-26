@@ -10,16 +10,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import snowcode.snowcode.auth.domain.Member;
 import snowcode.snowcode.auth.domain.Role;
-import snowcode.snowcode.auth.service.MemberService;
+import snowcode.snowcode.auth.service.AuthService;
 import snowcode.snowcode.common.response.BasicResponse;
 import snowcode.snowcode.common.response.ResponseUtil;
 import snowcode.snowcode.course.dto.*;
-import snowcode.snowcode.course.service.CourseWithEnrollmentFacade;
 import snowcode.snowcode.course.service.CourseService;
+import snowcode.snowcode.course.service.CourseWithEnrollmentFacade;
 import snowcode.snowcode.course.service.CourseWithMemberFacade;
 import snowcode.snowcode.course.service.CourseWithRegistrationFacade;
-import snowcode.snowcode.unit.dto.UnitCountListResponse;
-import snowcode.snowcode.unit.service.UnitWithAssignmentFacade;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,12 +25,11 @@ import snowcode.snowcode.unit.service.UnitWithAssignmentFacade;
 public class CourseController {
     private final CourseService courseService;
     private final CourseWithEnrollmentFacade courseWithEnrollmentFacade;
-    private final MemberService memberService;
     private final CourseWithMemberFacade courseWithMemberFacade;
-    private final UnitWithAssignmentFacade unitWithAssignmentFacade;
     private final CourseWithRegistrationFacade courseWithRegistrationFacade;
+    private final AuthService authService;
 
-    @PostMapping("/{memberId}")
+    @PostMapping
     @Operation(summary = "강의 추가 API", description = "강의 추가 (학생까지 추가)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "강의 추가 성공",
@@ -45,13 +42,13 @@ public class CourseController {
                     content = {@Content(schema = @Schema(implementation = BasicResponse.class))}),
 
     })
-    public BasicResponse<CourseResponse> createCourse(@PathVariable Long memberId, @Valid @RequestBody CourseRequest dto) {
-        Member member = memberService.findMember(memberId);
+    public BasicResponse<CourseResponse> createCourse(@Valid @RequestBody CourseRequest dto) {
+        Member member = authService.loadMember();
         CourseResponse course = courseWithEnrollmentFacade.createCourseWithEnroll(member, dto);
         return ResponseUtil.success(course);
     }
 
-    @GetMapping("/{memberId}/{courseId}/assignments")
+    @GetMapping("/{courseId}/assignments")
     @Operation(summary = "강의별 전체 과제 조회 API", description = "title이 같은 강의별 전체 과제 조회 (분반, 학기 등 상관 없음)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "강의별 전체 과제 조회 성공",
@@ -59,12 +56,13 @@ public class CourseController {
             @ApiResponse(responseCode = "404", description = "강의가 존재하지 않습니다.",
                     content = {@Content(schema = @Schema(implementation = BasicResponse.class))}),
     })
-    public BasicResponse<CourseCountWithAssignmentResponse> findAllAssignmentWithCourseTitle(@PathVariable Long memberId, @PathVariable Long courseId) {
+    public BasicResponse<CourseCountWithAssignmentResponse> findAllAssignmentWithCourseTitle(@PathVariable Long courseId) {
+        Long memberId = authService.loadMember().getId();
         CourseCountWithAssignmentResponse courseList = courseWithRegistrationFacade.findCourseTitleWithAssignments(memberId, courseId);
         return ResponseUtil.success(courseList);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{courseId}")
     @Operation(summary = "강의 수정 API", description = "강의 수정")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "강의 수정 성공",
@@ -78,12 +76,12 @@ public class CourseController {
             @ApiResponse(responseCode = "400", description = "학기 입력이 잘못되었습니다. (FIRST, SECOND, SUMMER, WINTER 중 하나)",
                     content = {@Content(schema = @Schema(implementation = BasicResponse.class))}),
     })
-    public BasicResponse<CourseResponse> updateCourse(@PathVariable Long id, @Valid @RequestBody CourseRequest dto) {
-        CourseResponse course = courseService.updateCourse(id, dto);
+    public BasicResponse<CourseResponse> updateCourse(@PathVariable Long courseId, @Valid @RequestBody CourseRequest dto) {
+        CourseResponse course = courseService.updateCourse(courseId, dto);
         return ResponseUtil.success(course);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{courseId}")
     @Operation(summary = "강의 삭제 API", description = "강의 삭제 (관련 단원 함께 삭제, 연결된 과제는 삭제 X)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "강의 삭제 성공",
@@ -91,23 +89,24 @@ public class CourseController {
             @ApiResponse(responseCode = "404", description = "강의가 존재하지 않습니다.",
                     content = {@Content(schema = @Schema(implementation = BasicResponse.class))}),
     })
-    public BasicResponse<String> deleteCourse(@PathVariable Long id) {
-        courseWithEnrollmentFacade.deleteCourseAndEnrollment(id);
+    public BasicResponse<String> deleteCourse(@PathVariable Long courseId) {
+        courseWithEnrollmentFacade.deleteCourseAndEnrollment(courseId);
         return ResponseUtil.success("강의 삭제에 성공하였습니다.");
     }
 
-    @GetMapping("/{memberId}/my")
+    @GetMapping("/my")
     @Operation(summary = "전체 강의 조회 API", description = "내가 듣는 전체 강의 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "전체 강의 조회 성공",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = CourseCountListResponse.class))}),
             })
-    public BasicResponse<CourseCountListResponse> findMyCourses(@PathVariable Long memberId) {
+    public BasicResponse<CourseCountListResponse> findMyCourses() {
+        Long memberId = authService.loadMember().getId();
         CourseCountListResponse myCourses = courseWithEnrollmentFacade.findMyCourses(memberId);
         return ResponseUtil.success(myCourses);
     }
 
-    @GetMapping("/{memberId}/{courseId}")
+    @GetMapping("/{courseId}")
     @Operation(summary = "강의 조회 API", description = "단건 강의 조회 (학생/관리자에 따라 리턴값 다름)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "단건 강의 조회 성공",
@@ -117,20 +116,15 @@ public class CourseController {
             @ApiResponse(responseCode = "404", description = "강의가 존재하지 않습니다.",
                     content = {@Content(schema = @Schema(implementation = BasicResponse.class))}),
     })
-    public BasicResponse<?> findCourse(@PathVariable Long memberId, @PathVariable Long courseId) {
-        Member member = memberService.findMember(memberId);
+    public BasicResponse<?> findCourse(@PathVariable Long courseId) {
+
+        Member member = authService.loadMember();
         if (member.getRole().equals(Role.ADMIN)) {
             CourseDetailAdminResponse course = courseWithMemberFacade.createAdminCourseResponse(courseId);
             return ResponseUtil.success(course);
         } else {
-            CourseDetailStudentResponse course = courseWithMemberFacade.createStudentCourseResponse(memberId, courseId);
+            CourseDetailStudentResponse course = courseWithMemberFacade.createStudentCourseResponse(member.getId(), courseId);
             return ResponseUtil.success(course);
         }
     }
-
-//    @GetMapping("/{courseId}/units")
-//    public BasicResponse<UnitCountListResponse> findAllUnit(@PathVariable Long courseId) {
-//        UnitCountListResponse unitCountListResponse = unitWithAssignmentFacade.findAllUnit(courseId);
-//        return ResponseUtil.success(unitCountListResponse);
-//    }
 }

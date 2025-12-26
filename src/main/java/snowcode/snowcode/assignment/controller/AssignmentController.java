@@ -16,6 +16,7 @@ import snowcode.snowcode.assignment.service.AssignmentDeleteFacade;
 import snowcode.snowcode.assignment.service.AssignmentWithTestcaseFacade;
 import snowcode.snowcode.assignmentRegistration.dto.RegistrationScheduleResponse;
 import snowcode.snowcode.assignmentRegistration.service.RegistrationScheduleService;
+import snowcode.snowcode.auth.service.AuthService;
 import snowcode.snowcode.common.response.BasicResponse;
 import snowcode.snowcode.common.response.ResponseUtil;
 
@@ -28,6 +29,7 @@ public class AssignmentController {
     private final AssignmentDeleteFacade assignmentDeleteFacade;
     private final RegistrationScheduleService registrationScheduleService;
     private final AssignmentWithTestcaseFacade assignmentWithTestcaseFacade;
+    private final AuthService authService;
 
     @PostMapping
     @Operation(summary = "과제 추가 API", description = "과제 추가")
@@ -53,13 +55,14 @@ public class AssignmentController {
         return ResponseUtil.success(assignmentInfo);
     }
 
-    @GetMapping("/{memberId}/schedule")
+    @GetMapping("/schedule")
     @Operation(summary = "일정 리스트업 API", description = "해야 할 과제 리스트 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "일정 리스트업 성공",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = RegistrationScheduleResponse.class))}),
     })
-    public BasicResponse<RegistrationScheduleResponse> listUpMySchedule(@PathVariable Long memberId) {
+    public BasicResponse<RegistrationScheduleResponse> listUpMySchedule() {
+        Long memberId = authService.loadMember().getId();
         RegistrationScheduleResponse assignments = registrationScheduleService.listUpMySchedule(memberId);
         return ResponseUtil.success(assignments);
     }

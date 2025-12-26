@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import snowcode.snowcode.assignmentRegistration.domain.AssignmentRegistration;
 import snowcode.snowcode.assignmentRegistration.service.RegistrationService;
 import snowcode.snowcode.auth.domain.Member;
-import snowcode.snowcode.auth.service.MemberService;
+import snowcode.snowcode.auth.service.AuthService;
 import snowcode.snowcode.code.dto.CodeRequest;
 import snowcode.snowcode.common.response.BasicResponse;
 import snowcode.snowcode.common.response.ResponseUtil;
@@ -23,17 +23,17 @@ import snowcode.snowcode.submission.service.SubmissionWithCodeFacade;
 @RequestMapping("/assignments")
 public class SubmissionController {
     private final SubmissionWithCodeFacade submissionWithCodeFacade;
-    private final MemberService memberService;
     private final RegistrationService registrationService;
+    private final AuthService authService;
 
-    @PostMapping("/{memberId}/{unitId}/{assignmentId}/code")
+    @PostMapping("/{unitId}/{assignmentId}/code")
     @Operation(summary = "코드 제출 API", description = "코드 제출")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "코드 제출 성공",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = SubmissionResponse.class))}),
     })
-    public BasicResponse<SubmissionResponse> createSubmission(@PathVariable Long memberId, @PathVariable Long unitId, @PathVariable Long assignmentId, @RequestBody CodeRequest dto) {
-        Member member = memberService.findMember(memberId);
+    public BasicResponse<SubmissionResponse> createSubmission(@PathVariable Long unitId, @PathVariable Long assignmentId, @RequestBody CodeRequest dto) {
+        Member member = authService.loadMember();
         AssignmentRegistration assignmentRegistration = registrationService.findByUnitIdAndAssignmentId(unitId, assignmentId);
         Submission submission = submissionWithCodeFacade.createSubmissionWithCode(member, assignmentRegistration, dto);
         return ResponseUtil.success(SubmissionResponse.of(submission));
