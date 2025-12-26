@@ -18,6 +18,9 @@ import snowcode.snowcode.course.service.CourseService;
 import snowcode.snowcode.course.service.CourseWithEnrollmentFacade;
 import snowcode.snowcode.course.service.CourseWithMemberFacade;
 import snowcode.snowcode.course.service.CourseWithRegistrationFacade;
+import snowcode.snowcode.unit.dto.UnitCountListResponse;
+import snowcode.snowcode.unit.dto.UnitWithAssignmentResponse;
+import snowcode.snowcode.unit.service.UnitWithAssignmentFacade;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,6 +30,7 @@ public class CourseController {
     private final CourseWithEnrollmentFacade courseWithEnrollmentFacade;
     private final CourseWithMemberFacade courseWithMemberFacade;
     private final CourseWithRegistrationFacade courseWithRegistrationFacade;
+    private final UnitWithAssignmentFacade unitWithAssignmentFacade;
     private final AuthService authService;
 
     @PostMapping
@@ -126,5 +130,18 @@ public class CourseController {
             CourseDetailStudentResponse course = courseWithMemberFacade.createStudentCourseResponse(member.getId(), courseId);
             return ResponseUtil.success(course);
         }
+    }
+
+    @GetMapping("/{courseId}/units")
+    @Operation(summary = "전체 단원 조회 API", description = "전체 단원 조회 (이름)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "전체 단원 조회 성공",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = UnitWithAssignmentResponse.class))}),
+            @ApiResponse(responseCode = "404", description = "단원이 존재하지 않습니다.",
+                    content = {@Content(schema = @Schema(implementation = BasicResponse.class))}),
+    })
+    public BasicResponse<UnitCountListResponse> findAllUnit(@PathVariable Long courseId) {
+        UnitCountListResponse units = unitWithAssignmentFacade.findAllUnit(courseId);
+        return ResponseUtil.success(units);
     }
 }

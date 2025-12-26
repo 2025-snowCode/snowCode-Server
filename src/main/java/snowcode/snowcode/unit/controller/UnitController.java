@@ -13,12 +13,12 @@ import snowcode.snowcode.common.response.BasicResponse;
 import snowcode.snowcode.common.response.ResponseUtil;
 import snowcode.snowcode.course.domain.Course;
 import snowcode.snowcode.course.service.CourseService;
-import snowcode.snowcode.unit.dto.UnitRequest;
-import snowcode.snowcode.unit.dto.UnitResponse;
-import snowcode.snowcode.unit.dto.UnitUpdateRequest;
-import snowcode.snowcode.unit.dto.UnitWithAssignmentResponse;
+import snowcode.snowcode.unit.domain.Unit;
+import snowcode.snowcode.unit.dto.*;
 import snowcode.snowcode.unit.service.UnitService;
 import snowcode.snowcode.unit.service.UnitWithAssignmentFacade;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
