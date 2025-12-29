@@ -74,7 +74,7 @@ public class SecurityConfig {
                                         "frame-ancestors 'self'; " +
                                         "base-uri 'self'; " +
                                         "form-action 'self'"
-                        )
+                        ).reportOnly()
                 )
                 .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
                 .httpStrictTransportSecurity(hsts -> hsts
@@ -97,7 +97,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of(frontend));
+        config.setAllowedOrigins(List.of("http://localhost:8080", frontend));
         config.setAllowedMethods(List.of("GET","POST","PUT","DELETE","PATCH", "OPTIONS"));
 //        config.setAllowedHeaders(List.of("*"));
         config.setAllowedHeaders(Arrays.asList(
@@ -106,7 +106,7 @@ public class SecurityConfig {
                 "Accept",
                 "X-Requested-With"));
 
-//        config.setAllowCredentials(true); // 쿠키 허용
+        config.setAllowCredentials(true); // 쿠키 허용
         config.setMaxAge(3600L); // Preflight 요청 캐시 시간 (초)
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
