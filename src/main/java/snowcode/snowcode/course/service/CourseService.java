@@ -1,0 +1,72 @@
+package snowcode.snowcode.course.service;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import snowcode.snowcode.common.exception.Validator;
+import snowcode.snowcode.course.domain.Course;
+import snowcode.snowcode.course.domain.Semester;
+import snowcode.snowcode.course.dto.CourseRequest;
+import snowcode.snowcode.course.dto.CourseResponse;
+import snowcode.snowcode.course.exception.CourseErrorCode;
+import snowcode.snowcode.course.exception.CourseException;
+import snowcode.snowcode.course.repository.CourseRepository;
+
+import java.util.Collections;
+import java.util.List;
+
+@Service
+@Transactional
+@RequiredArgsConstructor
+public class CourseService {
+    private final CourseRepository courseRepository;
+
+    public Course createCourse(Long memberId, CourseRequest dto) {
+
+        int year = Validator.validYear(dto.year());
+        Semester semester = Semester.valueOf(dto.semester());
+
+        Course course = Course.createCourse(memberId, dto.title(), dto.section(), year, semester, dto.description());
+        courseRepository.save(course);
+        return course;
+    }
+
+    @Transactional(readOnly = true)
+    public Course findCourse(Long id) {
+        return courseRepository.findById(id).orElseThrow(
+                () -> new CourseException(CourseErrorCode.COURSE_NOT_FOUND));
+    }
+
+    @Transactional(readOnly = true)
+    public List<Long> findCourseIdsWithTitle(Long memberId, Long courseId) {
+        Course course = findCourse(courseId);
+        String title = course.getTitle();
+        return courseRepository.findIdsByTitle(memberId, title);
+    }
+
+    public CourseResponse updateCourse(Long id, CourseRequest dto) {
+        Course course = findCourse(id);
+
+        int year = Validator.validYear(dto.year());
+        Semester semester = Semester.valueOf(dto.semester());
+
+        course.updateCourse(dto.title(), dto.section(), year, semester, dto.description());
+        return CourseResponse.from(course);
+    }
+
+    public void deleteCourse(Long id) {
+        Course course = findCourse(id);
+        courseRepository.delete(course);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Long> extractCourseIds(List<Course> courses) {
+        if (courses == null) {
+            return Collections.emptyList();
+        }
+
+        return courses.stream()
+                .map(Course::getId)
+                .toList();
+    }
+}
