@@ -61,9 +61,9 @@ jobs:
           envs: GITHUB_SHA
           script: |
             sudo docker ps
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/poz
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/snowcode
             sudo docker stop $(sudo docker ps --filter "publish=8080" --format "{{.ID}}") 2>/dev/null || true
-            sudo docker run -d -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/poz
+            sudo docker run -d -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/snowcode
             sudo docker image prune -f
 
       - name: Set up SSH key
