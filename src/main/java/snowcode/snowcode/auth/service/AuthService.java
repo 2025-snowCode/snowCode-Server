@@ -3,10 +3,13 @@ package snowcode.snowcode.auth.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.reactive.function.client.WebClient;
 import snowcode.snowcode.auth.domain.Member;
 import snowcode.snowcode.auth.domain.Role;
 import snowcode.snowcode.auth.dto.login.*;
@@ -15,9 +18,6 @@ import snowcode.snowcode.auth.exception.TokenErrorCode;
 import snowcode.snowcode.auth.exception.TokenException;
 import snowcode.snowcode.auth.repository.MemberRepository;
 import snowcode.snowcode.refreshToken.service.RefreshTokenService;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.security.core.userdetails.UserDetails;
-
 
 import java.security.GeneralSecurityException;
 import java.time.LocalDateTime;
@@ -30,13 +30,13 @@ public class AuthService {
 
     private final MemberRepository memberRepository;
     private final JwtUtil jwtUtil;
+    private final CookieUtil cookieUtil;
     private final WebClient webClient;
     private final RefreshTokenService refreshTokenService;
 
 
     @Transactional
-    public SignUpResponse login(LoginRequest dto) throws GeneralSecurityException {
-
+    public SignUpWithCookieResponse login(LoginRequest dto) throws GeneralSecurityException {
 
         // 1. providerId 획득
         UserResponse userResponse = switch (dto.provider()) {
@@ -56,15 +56,17 @@ public class AuthService {
         CustomUserInfoDto info = CustomUserInfoDto.of(member);
 
         // 3. accessToken, refreshToken 발급
-        String accessToken = jwtUtil.createAccessToken(info); // access token
+        String accessToken = jwtUtil.createAccessToken(info); // access token, FIXME: 이후 15분 제한으로 바꿀 예정
         String refreshToken = jwtUtil.createRefreshToken(info); // refresh token
 
+        ResponseCookie accessCookie = cookieUtil.createAccessCookie(accessToken);
+        ResponseCookie refreshCookie = cookieUtil.createRefreshCookie(refreshToken);
         // 4. RefreshToken 저장/업데이트
         LocalDateTime expiryAt = LocalDateTime.now().plusDays(14);
 
         refreshTokenService.saveOrUpdate(member, refreshToken, expiryAt);
 
-        return SignUpResponse.of(member, accessToken, refreshToken);
+        return new SignUpWithCookieResponse(member, accessCookie, refreshCookie, accessToken);
     }
 
     @Transactional
@@ -93,11 +95,8 @@ public class AuthService {
     }
 
     public Role getRole() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null || !(auth.getPrincipal() instanceof CustomUserDetails user)) {
-            throw new TokenException(TokenErrorCode.UNAUTHORIZED);
-        }
-        return user.getRole();
+        Member member = loadMember();
+        return member.getRole();
     }
 
 
