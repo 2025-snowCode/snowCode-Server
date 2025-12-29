@@ -7,16 +7,15 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import snowcode.snowcode.auth.dto.login.LoginRequest;
-import snowcode.snowcode.auth.dto.login.ReissueRequest;
-import snowcode.snowcode.auth.dto.login.SignUpResponse;
-import snowcode.snowcode.auth.dto.login.TokenResponse;
+import snowcode.snowcode.auth.dto.login.*;
 import snowcode.snowcode.auth.service.AuthService;
 import snowcode.snowcode.auth.service.TokenService;
 import snowcode.snowcode.common.response.BasicResponse;
@@ -44,13 +43,19 @@ public class LoginController {
                     )),
             @ApiResponse(responseCode = "400", description = """
                     [UNAUTHORIZED] : 접근 권한이 없습니다. <br>
-                    [INVALID_PROVIDER] : provider은 KAKAO or GOOGLE or APPLE 이어야 합니다.
+                    [INVALID_PROVIDER] : provider은 KAKAO 이어야 합니다.
                     [PROVIDER_MISMATCH] : provider이 일치하지 않습니다.
                     """,
                     content = {@Content(mediaType = "application/json")}),
     })
-    public BasicResponse<SignUpResponse> login(@Valid @RequestBody LoginRequest dto) throws GeneralSecurityException {
-        SignUpResponse member = authService.login(dto);
+    public BasicResponse<SignUpResponse> login(HttpServletResponse response, @Valid @RequestBody LoginRequest dto) throws GeneralSecurityException {
+        SignUpWithCookieResponse withCookieResponse = authService.login(dto);
+
+        // 쿠키 추가
+        response.addHeader(HttpHeaders.SET_COOKIE, withCookieResponse.accessCookie().toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, withCookieResponse.refreshCookie().toString());
+
+        SignUpResponse member = SignUpResponse.of(withCookieResponse.member(), withCookieResponse.accessToken());
         return ResponseUtil.success(member);
     }
 

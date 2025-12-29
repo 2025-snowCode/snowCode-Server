@@ -19,8 +19,11 @@ import snowcode.snowcode.auth.exception.TokenErrorCode;
 import snowcode.snowcode.auth.exception.TokenException;
 import snowcode.snowcode.auth.service.AuthService;
 import snowcode.snowcode.auth.service.JwtUtil;
+import jakarta.servlet.http.Cookie;
+
 
 import java.io.IOException;
+import java.util.Arrays;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -36,11 +39,28 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         try {
-            String authorizationHeader = request.getHeader("Authorization");
+
+            String jwt = null;
+
+            // if swagger
+
+            if (isSwaggerRequest(request)) {
+                jwt = authWithSwagger(request);
+            } else {
+                // 쿠키용
+                if (request.getCookies()!= null) {
+                    jwt = Arrays.stream(request.getCookies())
+                            .filter(c -> c.getName().equals("accessToken"))
+                            .map(Cookie::getValue)
+                            .findFirst()
+                            .orElse(null);
+                }
+            }
+
 
             //JWT가 헤더에 있는 경우
-            if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-                String token = authorizationHeader.substring(7);
+            if (jwt != null) {
+                String token = jwt.substring(7);
                 //JWT 유효성 검증
                 if (jwtUtil.validateToken(token)) {
                     String username = jwtUtil.getUsername(token);
@@ -75,5 +95,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             authenticationEntryPoint.commence(request, response,
                     new TokenException(TokenErrorCode.UNAUTHORIZED));
         }
+    }
+
+    private String authWithSwagger(HttpServletRequest request) {
+        // jwt용
+        return request.getHeader("Authorization");
+    }
+
+    private boolean isSwaggerRequest(HttpServletRequest request) {
+        String referer = request.getHeader("Referer");
+        return referer != null && referer.contains("/swagger-ui");
     }
 }
