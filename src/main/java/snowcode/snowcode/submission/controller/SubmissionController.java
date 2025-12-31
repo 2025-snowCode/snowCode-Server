@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import snowcode.snowcode.assignmentRegistration.domain.AssignmentRegistration;
@@ -21,6 +22,7 @@ import snowcode.snowcode.submission.service.SubmissionWithCodeFacade;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/assignments")
+@Tag(name = "코드 제출", description = "Submission API")
 public class SubmissionController {
     private final SubmissionWithCodeFacade submissionWithCodeFacade;
     private final RegistrationService registrationService;

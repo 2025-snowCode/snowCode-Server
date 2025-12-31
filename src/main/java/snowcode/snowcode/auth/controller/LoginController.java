@@ -15,9 +15,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import snowcode.snowcode.auth.dto.login.*;
+import snowcode.snowcode.auth.dto.login.LoginRequest;
+import snowcode.snowcode.auth.dto.login.SignUpResponse;
+import snowcode.snowcode.auth.dto.login.SignUpWithCookieResponse;
 import snowcode.snowcode.auth.service.AuthService;
-import snowcode.snowcode.auth.service.TokenService;
 import snowcode.snowcode.common.response.BasicResponse;
 import snowcode.snowcode.common.response.ResponseUtil;
 
@@ -31,10 +32,9 @@ import java.security.GeneralSecurityException;
 public class LoginController {
 
     private final AuthService authService;
-    private final TokenService tokenService;
 
     @PostMapping
-    @Operation(summary = "로그인 API", description = "카카오/구글/애플")
+    @Operation(summary = "로그인 API", description = "카카오")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "로그인에 성공하였습니다.",
                     content = @Content(
@@ -57,27 +57,5 @@ public class LoginController {
 
         SignUpResponse member = SignUpResponse.of(withCookieResponse.member(), withCookieResponse.accessToken());
         return ResponseUtil.success(member);
-    }
-
-    // 액세스 토큰 재발급
-    @PostMapping("/auth/reissue")
-    @Operation(summary = "Access Token 재발급 API", description = "Access Token 만료 시 재발급 가능한 API")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Access token 재발급에 성공하였습니다.",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = TokenResponse.class)
-                    )),
-            @ApiResponse(responseCode = "400", description = "[UNAUTHORIZED] : 접근 권한이 없습니다.<br>" +
-                    "[MEMBER_NOT_FOUND] : 회원을 찾을 수 없습니다. <br>" +
-                    "[NOT_FOUND_TOKEN] : 토큰을 찾을 수 없습니다. <br>" +
-                    "[INVALID_TOKEN] : 유효하지 않은 토큰입니다. <br>" +
-                    "[TOKEN_HAS_EXPIRED] : 토큰의 유효기간이 만료되었습니다. (refresh Token 유효기간 만료) <br>",
-                    content = {@Content(mediaType = "application/json")})
-    })
-    public BasicResponse<TokenResponse> refreshAccessToken(@Valid @RequestBody ReissueRequest dto) {
-        authService.loadMember();
-        TokenResponse tokenResponse = tokenService.refresh(dto.refreshToken());
-        return ResponseUtil.success(tokenResponse);
     }
 }

@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,7 @@ import snowcode.snowcode.testcase.service.TestcaseService;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/testcase")
+@Tag(name = "테스트케이스", description = "Testcase API")
 public class TestcaseController {
 
     private final TestcaseService testcaseService;
