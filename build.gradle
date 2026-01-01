@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.5.3'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id 'io.gatling.gradle' version '3.9.3'
 }
 
 group = 'snowcode'
@@ -44,6 +45,14 @@ dependencies {
 	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
 	implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
 	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+
+	// monitoring
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'io.micrometer:micrometer-registry-prometheus'
+
+	// 부하 테스트
+	testImplementation 'io.gatling.highcharts:gatling-charts-highcharts:3.9.3'
+    testImplementation 'io.gatling:gatling-test-framework:3.9.3'
 }
 
 tasks.named('test') {
