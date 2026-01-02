@@ -20,6 +20,6 @@ public record LoginRequest(@NotBlank
                            @Schema(description = "email, 소셜로그인에서는 사용 X", example = "test@gmail.com")
                            String email,
 
-                           @Schema(description = "앱에서 소셜 로그인 시 발급 받은 코드", example = "3jdiasjfkdnsizmd")
+                           @Schema(description = "앱에서 소셜 로그인 시 발급 받은 코드", example = "sM0yOK1FPuGJaq8x/U76gkKNfT64GQKsityED54zG9M=")
                            @NotBlank String OAuthToken) {
 }

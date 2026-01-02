@@ -60,6 +60,7 @@ public class JwtUtil {
                 .setSubject(member.username().toString())
                 .claim("provider", member.provider())
                 .claim("role", member.role())
+                .claim("name", member.name())
                 .setIssuedAt(Date.from(now.toInstant()))
                 .setExpiration(Date.from(expiry.toInstant()))
                 .signWith(key, SignatureAlgorithm.HS256)
