@@ -49,7 +49,7 @@ public class Member extends BaseTimeEntity {
     }
 
     public static Member createMember(LoginRequest dto, UserResponse userResponse) {
-        return new Member(UUID.randomUUID(), dto.name() != null ? dto.name() : String.valueOf(UUID.randomUUID()), Role.of(dto.role()), userResponse.email(), dto.provider(), userResponse.providerId());
+        return new Member(UUID.randomUUID(), dto.name() != null ? dto.name() : String.valueOf(UUID.randomUUID()), Role.of(dto.role()), dto.provider().equals("LOCAL") ? dto.email() : userResponse.email(), dto.provider(), userResponse.providerId());
     }
 
 

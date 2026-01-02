@@ -41,17 +41,24 @@ public class AuthService {
         // 1. providerId 획득
         UserResponse userResponse = switch (dto.provider()) {
             case "KAKAO" -> kakaoLogin(dto);
+            case "LOCAL" -> localLogin(dto);
             default -> throw new TokenException(TokenErrorCode.INVALID_PROVIDER);
         };
 
-        String providerId = userResponse.providerId();
-        if (providerId.isBlank()) {
-            throw new TokenException(TokenErrorCode.INVALID_TOKEN);
+        Member member;
+        if (dto.provider().equals("KAKAO")) {
+            String providerId = userResponse.providerId();
+            if (providerId.isBlank()) {
+                throw new TokenException(TokenErrorCode.INVALID_TOKEN);
+            }
+            // 2. DB 조회
+            member = memberRepository.findByProviderAndProviderId(dto.provider(), providerId)
+                    .orElseGet(() -> signUp(dto, userResponse));
+        } else {
+            member = memberRepository.findByProviderAndEmail(dto.provider(), dto.email())
+                    .orElseGet(() -> signUp(dto, userResponse));
         }
 
-        // 2. DB 조회
-        Member member = memberRepository.findByProviderAndProviderId(dto.provider(), providerId)
-                .orElseGet(() -> signUp(dto, userResponse));
 
         CustomUserInfoDto info = CustomUserInfoDto.of(member);
 
@@ -116,6 +123,10 @@ public class AuthService {
                 .retrieve()
                 .bodyToMono(KakaoUserResponse.class) // JSON → DTO 변환
                 .block(); // 동기 방식으로 결과 받기
+    }
+
+    public UserResponse localLogin(LoginRequest dto) {
+        return new UserResponse("12345", null);
     }
 
 }

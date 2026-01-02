@@ -34,7 +34,7 @@ public class LoginController {
     private final AuthService authService;
 
     @PostMapping
-    @Operation(summary = "로그인 API", description = "카카오")
+    @Operation(summary = "로그인 API", description = "provider은 KAKAO or LOCAL(테스트용 멤버 생성 가능), email은 소셜로그인에서는 사용 X")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "로그인에 성공하였습니다.",
                     content = @Content(
