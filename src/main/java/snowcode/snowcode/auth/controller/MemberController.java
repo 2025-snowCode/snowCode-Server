@@ -53,15 +53,15 @@ public class MemberController {
         return ResponseUtil.success(dto);
     }
 
-    @PostMapping("/students")
-    @Operation(summary = "학번 입력", description = "학번 입력 (사용 X)")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "학번 업데이트 성공",
-                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = AddProfileResponse.class))}),
-    })
-    public BasicResponse<AddProfileResponse> updateStudentId(@Valid @RequestBody AddProfileRequest dto) {
-        Member member = authService.loadMember();
-        AddProfileResponse addProfileResponse = memberService.updateStudentId(member, dto.studentId());
-        return ResponseUtil.success(addProfileResponse);
-    }
+//    @PostMapping("/students")
+//    @Operation(summary = "학번 입력", description = "학번 입력 (사용 X)")
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "200", description = "학번 업데이트 성공",
+//                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = AddProfileResponse.class))}),
+//    })
+//    public BasicResponse<AddProfileResponse> updateStudentId(@Valid @RequestBody AddProfileRequest dto) {
+//        Member member = authService.loadMember();
+//        AddProfileResponse addProfileResponse = memberService.updateStudentId(member, dto.studentId());
+//        return ResponseUtil.success(addProfileResponse);
+//    }
 }

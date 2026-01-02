@@ -14,6 +14,9 @@ public record LoginRequest(@NotBlank
                            @Schema(description = "role, ADMIN or USER", example = "USER")
                            String role,
 
+                           @Schema(description = "학번 입력, USER인 경우에만 입력", example = "2313398")
+                           String studentId,
+
                            @Schema(description = "email, 소셜로그인에서는 사용 X", example = "test@gmail.com")
                            String email,
 
