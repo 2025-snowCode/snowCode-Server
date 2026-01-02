@@ -18,7 +18,7 @@ public record SignUpResponse(
         String email,
         @Schema(description = "provider (KAKAO 고정)", example = "KAKAO")
         String provider,
-        @Schema(description = "accessToken, Swagger 확인용, 유효기간: 1일", example = "ejhdfjacidsjf")
+        @Schema(description = "accessToken, Swagger 확인용, 유효기간: 1일", example = "sM0yOK1FPuGJaq8x/U76gkKNfT64GQKsityED54zG9M=")
         String accessToken
 ) {
 
