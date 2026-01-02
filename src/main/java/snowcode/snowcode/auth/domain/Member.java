@@ -39,17 +39,18 @@ public class Member extends BaseTimeEntity {
     @Column(nullable = false)
     private String providerId;
 
-    private Member(UUID username, String name, Role role, String email, String provider, String providerId) {
+    private Member(UUID username, String name, Role role, String studentId, String email, String provider, String providerId) {
         this.username = username;
         this.name = name;
         this.role = role;
+        this.studentId = studentId;
         this.email = email;
         this.provider = provider;
         this.providerId = providerId;
     }
 
     public static Member createMember(LoginRequest dto, UserResponse userResponse) {
-        return new Member(UUID.randomUUID(), dto.name() != null ? dto.name() : String.valueOf(UUID.randomUUID()), Role.of(dto.role()), dto.provider().equals("LOCAL") ? dto.email() : userResponse.email(), dto.provider(), userResponse.providerId());
+        return new Member(UUID.randomUUID(), dto.name() != null ? dto.name() : String.valueOf(UUID.randomUUID()), Role.of(dto.role()), dto.studentId(), dto.provider().equals("LOCAL") ? dto.email() : userResponse.email(), dto.provider(), userResponse.providerId());
     }
 
 
