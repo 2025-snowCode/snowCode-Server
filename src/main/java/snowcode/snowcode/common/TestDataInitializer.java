@@ -119,7 +119,7 @@ public class TestDataInitializer {
 
                 List<Long> assignmentIds = new ArrayList<>();
 
-                int assignmentStart = j * 2;
+                int assignmentStart = j * 2+1;
                 int assignmentEnd = assignmentStart + 2;
 
                 for (int k = assignmentStart; k < assignmentEnd; k++) {

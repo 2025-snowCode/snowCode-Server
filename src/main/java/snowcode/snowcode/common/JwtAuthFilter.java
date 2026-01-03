@@ -109,6 +109,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     private boolean isSwaggerRequest(HttpServletRequest request) {
         String referer = request.getHeader("Referer");
-        return referer != null && referer.contains("/swagger-ui");
+//        return referer != null && referer.contains("/swagger-ui");
+        return true;
     }
 }
