@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.stream.IntStream;
 import java.util.function.Supplier;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
 import static io.gatling.javaapi.core.CoreDsl.*;
 import static io.gatling.javaapi.http.HttpDsl.*;
@@ -23,10 +24,17 @@ public class FindAllCourseSimulation extends Simulation {
 
     AtomicInteger emailIndex = new AtomicInteger(0);
 
-    Iterator<Map<String, Object>> emailIterator =
-            IntStream.rangeClosed(0, 3824)
-                    .mapToObj(i -> Map.<String, Object>of(
-                            "email", "test" + i + "@gmail.com"
+//    Iterator<Map<String, Object>> emailIterator =
+//            IntStream.rangeClosed(0, 3824)
+//                    .mapToObj(i -> Map.<String, Object>of(
+//                            "email", "test" + i + "@gmail.com"
+//                    ))
+//                    .iterator();
+
+    Iterator<Map<String, Object>> emailFeeder =
+            Stream.generate(new AtomicInteger(0)::getAndIncrement)
+                    .map(i -> Map.<String, Object>of(
+                            "email", "test" + (i % 3825) + "@gmail.com"
                     ))
                     .iterator();
 
@@ -63,19 +71,50 @@ public class FindAllCourseSimulation extends Simulation {
 
     ScenarioBuilder scn =
             scenario("Login → My Courses")
-                    .feed(emailIterator)
+                    .feed(emailFeeder)
                     .exec(login)
-                    .exec(myCourses);
-
-
+                    .exitHereIfFailed()
+                    .exec(myCourses)
+                    .exitHere();
 
     {
         setUp(
 
-                scn.injectOpen(
+
+                // 유입 (많음)
+//                scn.injectOpen(
+//                        nothingFor(4), // 4초간 정지 (요청이 들어오지 않을 때 어떤 식으로 진행되는지 확인하기 위함)
+//                        rampUsersPerSec(0).to(382).during(60 * 3), // 0 ~ 3분까지 유저를 382명으로 점진적으로 3분간 증가
+//                        rampUsersPerSec(382).to(1875).during(60 * 7), // 3 ~ 10분까지 초당 382명의 유저에서 초당 1875명의 유저가 요청하는 형태로 균일하게 증가하게 진행
+//                        constantUsersPerSec(1875).during(60 * 7), // 10 ~ 17분까지 초당 1875명의 유저가 7분 동안 요청 (유지)
+//                        rampUsersPerSec(1875).to(382).during(60 * 3) // 17 ~ 20분까지 1,875 -> 382로 요청 감소
+//                ).protocols(httpProtocol)
+
+                // 유입
+//                scn.injectOpen(
+//                        nothingFor(4), // 4초간 정지 (요청이 들어오지 않을 때 어떤 식으로 진행되는지 확인하기 위함)
+//                        rampUsers(382).during(60 * 3) // 0 ~ 3분까지 유저를 382명으로 증가
+//                        rampUsers(1875-382).during(60 * 7) // 3 ~ 10분까지 1875명의 유저가 요청
+//                        constantUsersPerSec(1875).during(7), // 10 ~ 17분까지 초당 1875명의 유저가 7분 동안 요청 (유지)
+//                        rampUsers(382).during(60 * 3) // 17 ~ 20분까지 1,875 -> 382로 요청 감소
+//                ).protocols(httpProtocol)
+
+//                scn.injectOpen(
 //                        nothingFor(4), // 4초간 정지 (요청이 들어오지 않을 때 어떤 식으로 진행되는지 확인하기 위함)
 //                        rampUsers(382).during(60) // 0 ~ 1분
-                        rampUsers(1).during(1) // 0 ~ 1분
+//                        rampUsers(1).during(1) // 0 ~ 1분
+//                ).protocols(httpProtocol)
+
+                // - 0~3분까지 0~382명
+                //- 3~10분까지 382~1,875명
+                //- 10~17분까지 유지
+                //- 17~20분까지 1875 ~ 382명
+
+                scn.injectClosed(
+                        rampConcurrentUsers(0).to(382).during(3 * 60),
+                        rampConcurrentUsers(382).to(1875).during(7 * 60),
+                        constantConcurrentUsers(1875).during(7 * 60),
+                        rampConcurrentUsers(1875).to(382).during(3 * 60)
                 ).protocols(httpProtocol)
         );
     }
