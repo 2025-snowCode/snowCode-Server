@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 import static io.gatling.javaapi.core.CoreDsl.*;
 import static io.gatling.javaapi.http.HttpDsl.*;
 
-public class FindAllCourseSimulation extends Simulation {
+public class FindAllStudentsSimulation extends Simulation {
 
     HttpProtocolBuilder httpProtocol = http
             .baseUrl("http://localhost:8080") // 테스트할 서버의 URL
@@ -23,20 +23,28 @@ public class FindAllCourseSimulation extends Simulation {
             .disableFollowRedirect();
 
     FeederBuilder.Batchable<String> authFeeder =
-            csv("tokens.csv").circular();
+            csv("tokens_admin.csv").circular();
 
-    ChainBuilder myCourses =
+    Iterator<Map<String, Object>> courseIdFeeder =
+            Stream.iterate(1, i -> i + 1)
+                    .map(i -> Map.<String, Object>of(
+                            "courseId", (i - 1) % 75 + 1
+                    ))
+                    .iterator();
+
+    ChainBuilder findStudents =
             exec(
-                    http("my courses")
-                            .get("/courses/my")
+                    http("find students")
+                            .get("/courses/#{courseId}/enrollments")
                                 .header("Authorization", "Bearer #{accessToken}")
                             .check(status().is(200))
             );
 
     ScenarioBuilder scn =
-            scenario("Login → My Courses")
+            scenario("find students")
+                    .feed(courseIdFeeder)
                     .feed(authFeeder)
-                    .exec(myCourses)
+                    .exec(findStudents)
                     .exitHere();
 
     {
@@ -52,7 +60,7 @@ public class FindAllCourseSimulation extends Simulation {
                         rampConcurrentUsers(382).to(1875).during(7 * 60),
                         constantConcurrentUsers(1875).during(7 * 60),
                         rampConcurrentUsers(1875).to(382).during(3 * 60)
-//                        rampConcurrentUsers(0).to(10).during(10)
+//                        rampConcurrentUsers(0).to(10).during(60)
                 ).protocols(httpProtocol)
         );
     }
