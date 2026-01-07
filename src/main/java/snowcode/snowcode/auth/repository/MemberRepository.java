@@ -6,6 +6,9 @@ import org.springframework.data.repository.query.Param;
 import snowcode.snowcode.auth.domain.Member;
 import snowcode.snowcode.auth.domain.Role;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -28,7 +31,17 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
         where e.course.id = :courseId
           and m.role <> :admin
     """)
-    List<Member> findNonAdminByCourseId(@Param("courseId") Long courseId,
+    Page<Member> findNonAdminByCourseId(@Param("courseId") Long courseId,
+                                        @Param("admin") Role admin, Pageable pageable);
+
+    @Query("""
+        select distinct m
+        from Enrollment e
+        join e.member m
+        where e.course.id = :courseId
+          and m.role <> :admin
+    """)
+    List<Member> findNonAdminByCourseIdList(@Param("courseId") Long courseId,
                                         @Param("admin") Role admin);
 
     @Query("""

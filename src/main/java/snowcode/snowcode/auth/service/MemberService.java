@@ -2,20 +2,22 @@ package snowcode.snowcode.auth.service;
 
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import snowcode.snowcode.auth.domain.Member;
 import snowcode.snowcode.auth.domain.Role;
-import snowcode.snowcode.auth.dto.*;
+import snowcode.snowcode.auth.dto.MemberCountListResponse;
+import snowcode.snowcode.auth.dto.MemberResponse;
 import snowcode.snowcode.auth.exception.AuthErrorCode;
 import snowcode.snowcode.auth.exception.AuthException;
-import snowcode.snowcode.auth.exception.TokenErrorCode;
-import snowcode.snowcode.auth.exception.TokenException;
 import snowcode.snowcode.auth.repository.MemberRepository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -23,17 +25,6 @@ import java.util.UUID;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-
-    @Transactional
-    public AddProfileResponse updateStudentId(Member member, String studentId) {
-        member.updateStudentId(studentId);
-        return AddProfileResponse.from(member);
-    }
-
-    public MyProfileResponse findMemberById(Long id) {
-        Member member = findMember(id);
-        return MyProfileResponse.from(member);
-    }
 
     public Member findMember(Long id) {
         return memberRepository.findById(id).orElseThrow(
@@ -49,28 +40,35 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
-    public List<Member> findNonAdmin(Long courseId, @Nullable String studentId) {
+    public Page<Member> findNonAdmin(Long courseId, @Nullable String studentId, int page, int pageSize) {
+        // page: 현재 페이지 지정, 페이지 안 총 리소스 지정 (10개), 해당 페이지를 오름차순으로 정렬
 
         if (studentId == null || studentId.isBlank()) {
-            return findNonAdminByCourseId(courseId);
+            Pageable pageable = PageRequest.of(page, pageSize);
+            return findNonAdminByCourseId(courseId, pageable);
         }
-        return findNonAdminByCourseIdAndStudentId(courseId, studentId)
-                .map(List::of)
-                .orElseGet(List::of);
+        // 학번으로 한 명만 찾기
+        List<Member> findMemberByStudentId = findNonAdminByCourseIdAndStudentId(courseId, studentId).stream().toList();
+        if (findMemberByStudentId.isEmpty()) {
+            return Page.empty();
+        }
+        return new PageImpl<>(findMemberByStudentId);
+
+    }
+
+
+    @Transactional(readOnly = true)
+    public Page<Member> findNonAdminByCourseId(Long courseId, Pageable pageable) {
+        return memberRepository.findNonAdminByCourseId(courseId, Role.ADMIN, pageable);
     }
 
     @Transactional(readOnly = true)
-    public List<Member> findNonAdminByCourseId(Long courseId) {
-        return memberRepository.findNonAdminByCourseId(courseId, Role.ADMIN);
+    public List<Member> findNonAdminByCourseIdList(Long courseId) {
+        return memberRepository.findNonAdminByCourseIdList(courseId, Role.ADMIN);
     }
 
     @Transactional(readOnly = true)
     public Optional<Member> findNonAdminByCourseIdAndStudentId(Long courseId, String studentId) {
         return memberRepository.findNonAdminByCourseIdAndStudentId(courseId, studentId, Role.ADMIN);
-    }
-
-    public Member findMemberByUsername(UUID username) {
-        return memberRepository.findByUsername(username)
-                .orElseThrow(() -> new TokenException(TokenErrorCode.NOT_FOUND_USERNAME));
     }
 }

@@ -48,7 +48,7 @@ public class CourseWithMemberFacade {
             unitDtoList.add(unitWithAssignmentFacade.createAdminUnitResponse(unit.getId()));
         }
 
-        int size = memberService.findNonAdminByCourseId(courseId).size();
+        int size = memberService.findNonAdminByCourseIdList(courseId).size();
 
         return CourseDetailAdminResponse.of(course, size, unitDtoList);
     }
