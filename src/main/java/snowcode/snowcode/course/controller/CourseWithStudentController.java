@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import snowcode.snowcode.auth.domain.Member;
 import snowcode.snowcode.auth.service.AuthContext;
@@ -52,7 +53,16 @@ public class CourseWithStudentController {
     }
 
     @GetMapping("/{courseId}/enrollments")
-    @Operation(summary = "학생 전체 조회 API", description = "수강 중인 학생 전체 조회 (검색-필터링 가능)")
+    @Operation(summary = "학생 전체 조회 API", description = """
+            수강 중인 학생 전체 조회 (검색-필터링 가능)
+            
+            studentId : 검색 시 사용
+            
+            page : 현재 페이지 위치, 0부터 시작
+            
+            pageSize : 몇 개씩 끊을 건지
+            
+            ex) 1~50까지의 학생 존재, page=2&pageSize=5로 하면 5~10까지의 학생만 조회""")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "학생 전체 조회 성공",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = StudentProgressListResponse.class))}),
@@ -60,14 +70,17 @@ public class CourseWithStudentController {
     })
     public BasicResponse<StudentProgressListResponse> findAllStudentWithStatus(
             @PathVariable Long courseId,
-            @RequestParam(required = false) String studentId) {
+            @RequestParam(required = false) String studentId,
+            @RequestParam int page,
+            @RequestParam int pageSize) {
 
-        List<Member> members = memberService.findNonAdmin(courseId, studentId);
-        StudentProgressListResponse students = unitProgressFacade.findAllStudents(members, courseId);
+        Page<Member> members = memberService.findNonAdmin(courseId, studentId, page, pageSize);
+        List<Member> memeberList = members.getContent();
+        StudentProgressListResponse students = unitProgressFacade.findAllStudents(memeberList, courseId);
         return ResponseUtil.success(students);
     }
 
-    @GetMapping("/{courseId}/enrollments/{memberId}")
+        @GetMapping("/{courseId}/enrollments/{memberId}")
     @Operation(summary = "학생 조회 API", description = "학생 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "학생 조회 성공",
