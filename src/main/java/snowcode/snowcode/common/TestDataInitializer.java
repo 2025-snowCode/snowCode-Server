@@ -46,7 +46,6 @@ public class TestDataInitializer {
     @PostConstruct
     @Transactional
     public void init() throws GeneralSecurityException {
-        System.out.println("test");
         createMember();
         createCourse();
         createAssignment();
