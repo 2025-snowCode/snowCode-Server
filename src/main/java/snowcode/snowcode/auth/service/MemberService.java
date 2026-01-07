@@ -43,9 +43,8 @@ public class MemberService {
     public Page<Member> findNonAdmin(Long courseId, @Nullable String studentId, int page, int pageSize) {
         // page: 현재 페이지 지정, 페이지 안 총 리소스 지정 (10개), 해당 페이지를 오름차순으로 정렬
 
-        Pageable pageable;
         if (studentId == null || studentId.isBlank()) {
-            pageable = PageRequest.of(page, pageSize);
+            Pageable pageable = PageRequest.of(page, pageSize);
             return findNonAdminByCourseId(courseId, pageable);
         }
         // 학번으로 한 명만 찾기

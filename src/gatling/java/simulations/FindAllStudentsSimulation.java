@@ -36,9 +36,12 @@ public class FindAllStudentsSimulation extends Simulation {
             exec(
                     http("find students")
                             .get("/courses/#{courseId}/enrollments")
-                                .header("Authorization", "Bearer #{accessToken}")
+                            .queryParam("page", "#{randomInt(0,4)}")
+                            .queryParam("pageSize", "10")
+                            .header("Authorization", "Bearer #{accessToken}")
                             .check(status().is(200))
             );
+
 
     ScenarioBuilder scn =
             scenario("find students")
