@@ -6,7 +6,7 @@ import snowcode.snowcode.testcase.domain.Testcase;
 public record TestcaseInfoResponse(
         @Schema(description = "테스트케이스 id", example = "1")
         Long id,
-        @Schema(description = "테스트케이스 문제", example = "1+2")
+        @Schema(description = "테스트케이스 문제", example = "1 2")
         String testcase,
         @Schema(description = "테스트케이스 정답", example = "3")
         String answer) {
