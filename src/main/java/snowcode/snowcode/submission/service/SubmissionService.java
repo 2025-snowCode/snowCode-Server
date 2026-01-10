@@ -18,8 +18,8 @@ public class SubmissionService {
 
     private final SubmissionRepository submissionRepository;
 
-    public Submission createSubmission(Member member, AssignmentRegistration assignmentRegistration) {
-        Submission submission = Submission.createSubmission(0, member, assignmentRegistration);
+    public Submission createSubmission(Member member, AssignmentRegistration assignmentRegistration, int score) {
+        Submission submission = Submission.createSubmission(score, member, assignmentRegistration);
         submissionRepository.save(submission);
         return submission;
     }
