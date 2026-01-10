@@ -116,7 +116,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(SubmissionException.class)
     public ResponseEntity<BasicResponse<ErrorEntity>> submissionException(SubmissionException e) {
         HttpStatus status = switch(e.getCode()) {
-            case SUBMISSION_NOT_FOUND -> HttpStatus.NOT_FOUND;
+            case SUBMISSION_NOT_FOUND, FILE_NOT_FOUND -> HttpStatus.NOT_FOUND;
             case INVALID_SUBMISSION_STATUS -> HttpStatus.BAD_REQUEST;
         };
         log.error("Submission Exception({}) = {}", e.getCode(), e.getMessage());
