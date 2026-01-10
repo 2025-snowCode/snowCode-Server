@@ -10,14 +10,11 @@ import snowcode.snowcode.code.dto.CodeRequest;
 import snowcode.snowcode.code.service.CodeExecutionService;
 import snowcode.snowcode.code.service.CodeService;
 import snowcode.snowcode.submission.domain.Submission;
-import snowcode.snowcode.submission.exception.SubmissionErrorCode;
-import snowcode.snowcode.submission.exception.SubmissionException;
+import snowcode.snowcode.submission.dto.SubmissionResponse;
 import snowcode.snowcode.testcase.dto.TestcaseInfoResponse;
 import snowcode.snowcode.testcase.service.TestcaseService;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 @Service
 @RequiredArgsConstructor
@@ -29,25 +26,19 @@ public class SubmissionWithCodeFacade {
     private final CodeExecutionService codeExecutionService;
     private final TestcaseService testcaseService;
 
-    public Submission createSubmissionWithCode(Member member, AssignmentRegistration assignmentRegistration, CodeRequest dto) {
-        try {
-            String result = codeExecutionService.run(dto.code()).get();
-            // 채점
-            Assignment assignment = assignmentRegistration.getAssignment();
-            List<TestcaseInfoResponse> testcaseList = testcaseService.findByTestcases(assignment.getId());
-            int score = codeExecutionService.judgeSubmission(testcaseList, result, assignment.getScore());
-            Submission submission = submissionService.createSubmission(member, assignmentRegistration, score);
-            codeService.createCode(submission, dto);
-            return submission;
+    public SubmissionResponse createSubmissionWithCode(Member member, AssignmentRegistration assignmentRegistration, CodeRequest dto) {
 
-        } catch (InterruptedException ex) {
-            Thread.currentThread().interrupt();
-            throw new SubmissionException(SubmissionErrorCode.FILE_NOT_FOUND);
-        } catch (IOException ex) {
-            throw new SubmissionException(SubmissionErrorCode.FILE_NOT_FOUND);
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e);
-        }
+        // 채점 준비 (과제, 테스트케이스 불러오기)
+        Assignment assignment = assignmentRegistration.getAssignment();
+        List<TestcaseInfoResponse> testcaseList = testcaseService.findByTestcases(assignment.getId());
+
+        // 채점
+        int score = codeExecutionService.judgeSubmission(testcaseList, dto.code(), assignment.getScore());
+
+        // 저장 로직
+        Submission submission = submissionService.createSubmission(member, assignmentRegistration, score);
+        Long codeId = codeService.createCode(submission, dto).id();
+        return SubmissionResponse.of(codeId, submission);
     }
 
     public void deleteSubmissionWithRegistrationId(Long registrationId) {

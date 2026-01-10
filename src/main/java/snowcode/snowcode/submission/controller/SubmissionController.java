@@ -37,7 +37,7 @@ public class SubmissionController {
     public BasicResponse<SubmissionResponse> createSubmission(@PathVariable Long unitId, @PathVariable Long assignmentId, @RequestBody CodeRequest dto) {
         Member member = authService.loadMember();
         AssignmentRegistration assignmentRegistration = registrationService.findByUnitIdAndAssignmentId(unitId, assignmentId);
-        Submission submission = submissionWithCodeFacade.createSubmissionWithCode(member, assignmentRegistration, dto);
-        return ResponseUtil.success(SubmissionResponse.of(submission));
+        SubmissionResponse submission = submissionWithCodeFacade.createSubmissionWithCode(member, assignmentRegistration, dto);
+        return ResponseUtil.success(submission);
     }
 }

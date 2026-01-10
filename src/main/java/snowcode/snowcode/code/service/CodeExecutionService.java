@@ -12,9 +12,11 @@ import snowcode.snowcode.testcase.dto.TestcaseInfoResponse;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 @Service
@@ -24,7 +26,7 @@ import java.util.concurrent.Future;
 public class CodeExecutionService {
 
     @Async("taskExecutor") // 사용할 custom executor 지정
-    public Future<String> run(String code) throws IOException, InterruptedException {
+    public Future<String> run(String code, String testcase) throws IOException, InterruptedException {
         // 스레드 수행 내용 작성
         String random = UUID.randomUUID().toString();
         try {
@@ -35,24 +37,53 @@ public class CodeExecutionService {
             ProcessBuilder processBuilder = new ProcessBuilder("python3",
                     Paths.get(String.format("%s.py", random)).toString());
             Process process = processBuilder.start();
+
+            try (BufferedWriter bw = new BufferedWriter(
+                    new OutputStreamWriter(process.getOutputStream(), StandardCharsets.UTF_8))) {
+                bw.write(testcase);
+                bw.flush();
+            }
             process.waitFor();
 
             // 프로세스 실행 아웃풋 반환
-            BufferedReader br =  new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
+            BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
             return CompletableFuture.completedFuture(getOutput(br));
-        }
-        finally {
+        } finally {
             // 작성한 파일 삭제
             deleteFile(random); // FIXME : 서버 환경에서 path 설정 필요
         }
     }
 
-    public int judgeSubmission(List<TestcaseInfoResponse> testcaseList, String result, int totalScore) {
+    public int judgeSubmission(List<TestcaseInfoResponse> testcaseList, String code, int totalScore) {
+        try {
+            List<String> outputList = new ArrayList<>();
+            // 계산해서 결과 쌍 얻어내기
+            for (TestcaseInfoResponse testcase : testcaseList) {
+                String result = run(code, testcase.testcase()).get();
+                outputList.add(result);
+            }
+
+            // 맞는지 검사 후 점수 계산
+            return calcScore(testcaseList, outputList, totalScore);
+
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            throw new SubmissionException(SubmissionErrorCode.FILE_NOT_FOUND);
+        } catch (IOException ex) {
+            throw new SubmissionException(SubmissionErrorCode.FILE_NOT_FOUND);
+        } catch (
+                ExecutionException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private int calcScore(List<TestcaseInfoResponse> testcaseList, List<String> outputList, int totalScore) {
+        // 계산
         int totalScoreSize = testcaseList.size();
         int scoreSize = 0;
 
-        for (TestcaseInfoResponse dto : testcaseList) {
-            if (dto.answer().equals(result)) {
+        for (int i=0; i<totalScoreSize; i++) {
+            if (testcaseList.get(i).answer().equals(outputList.get(i))) {
                 scoreSize++;
             }
         }
@@ -74,13 +105,13 @@ public class CodeExecutionService {
     }
 
     private void createFile(String random, String code) {
-        File file = new File(random +".py");
+        File file = new File(random + ".py");
 
         try {
             if (file.createNewFile()) {
                 //생성된 파일에 Buffer 를 사용하여 텍스트 입력
                 FileWriter fw = new FileWriter(file);
-                BufferedWriter writer  = new BufferedWriter(fw);
+                BufferedWriter writer = new BufferedWriter(fw);
 
                 // 데이터 입력
                 writer.write(code);
