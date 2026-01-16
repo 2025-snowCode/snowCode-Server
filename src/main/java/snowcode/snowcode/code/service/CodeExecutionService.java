@@ -41,10 +41,11 @@ public class CodeExecutionService {
 
             // 해당 소스코드 파일을 python3으로 실행하는 프로세스를 생성
             ProcessBuilder processBuilder = new ProcessBuilder("python3",
-                    filePath.toAbsolutePath().toString());
-            log.info("소스코드 실행");
+                    filePath.toString());
+            log.info("소스코드 실행: {}", filePath);
             Process process = processBuilder.start();
 
+            log.info("소스코드 실행 성공");
             try (BufferedWriter bw = new BufferedWriter(
                     new OutputStreamWriter(process.getOutputStream(), StandardCharsets.UTF_8))) {
                 bw.write(testcase);
@@ -76,7 +77,7 @@ public class CodeExecutionService {
 
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
-            throw new SubmissionException(SubmissionErrorCode.FILE_NOT_FOUND);
+            throw new SubmissionException(SubmissionErrorCode.FILE_RUN_FAILED);
         } catch (IOException ex) {
             throw new SubmissionException(SubmissionErrorCode.FILE_NOT_FOUND);
         } catch (
