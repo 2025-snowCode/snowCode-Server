@@ -29,7 +29,10 @@ public class SubmissionController {
     private final AuthService authService;
 
     @PostMapping("/{unitId}/{assignmentId}/code")
-    @Operation(summary = "코드 제출 API", description = "코드 제출")
+    @Operation(summary = "코드 제출 API", description = """
+            코드 제출 시 code에는 반드시 파싱 가능하도록 보내주세요! \n
+            ex) print("hello") (X), print(\\\\\\"hello\\\\\\") (O)
+            """)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "코드 제출 성공",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = SubmissionResponse.class))}),
