@@ -46,43 +46,61 @@ public class SubmissionController {
     @PostMapping("/execute")
     @Operation(summary = "코드 실행 API", description = """
             ### WebSocket Endpoint \n
-            - ws://{localhost:8080}/ws/conn\\n
+            - wss://{BackURL}/ws/conn \n
+            
+            \n
+            
+            ### 중요!
+            - 사용 이후에는 반드시 끊어주세요!
+            - backURL에 포트번호는 포함되지 않습니다.
             
             ### 인증
-             WebSocket 요청 헤더에 JWT를 포함해야 합니다: Authorization: Bearer {JWT_TOKEN}
+            - WebSocket 요청 헤더에 JWT를 포함해야 합니다: Authorization: Bearer {JWT_TOKEN}
+           
+            \n
            
             ### 요청(JSON 예시)
             
-            ** input 필수! 만약 input이 필요 없는 문제라면 빈 값이라도 보내주세요! ** \n
+            - ** input 필수! 만약 input이 필요 없는 문제라면 빈 값이라도 보내주세요! ** \n
+            
+            \n
             
             ### input 없는 버전 (Empty String)
-            {
+            - {
                 "input": "",
                 "code": "print(\\"hello\\")"
             }
             
+            \n
+            
             ### input 있는 버전
             
-            {
+            - {
                 "input": "1 2",
                 "code": "a, b = map(int, input().split()) \\nprint(a + b)"
             }
             
+            \n
+            
             ### 200 - 정상 응답(JSON)
             
-            {
+            - {
                 "success": true,
                 "response": "hello"
             }
             
+            \n
+            
             
             ### 테스트 방법 (Swagger 테스트 불가, 포스트맨으로 테스트)
         
-            Postman → WebSocket 탭 -> \n
-            "ws://{backURL}/ws/conn" or wss://{backURL}/ws/conn (https용) \n
-            Header -> Authorization: Bearer {JWT}  \n
-            Body(JSON) -> 위 예시 입력 \n
-            블로그 참조 : https://senslife.tistory.com/52
+            - Postman → WebSocket 탭 -> \n
+            - wss://{backURL}/ws/conn (https용) \n
+            - Header -> Authorization: Bearer {JWT}  \n
+            - Body(JSON) -> 위 예시 입력 \n
+            - 블로그 참조 : https://senslife.tistory.com/52 \n
+            \n
+            cf) 연결 지속 시간은 1h으로 설정해두었습니다. \n
             
             """)
     @ApiResponses(value = {
