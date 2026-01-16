@@ -65,6 +65,7 @@ public class CodeExecutionService {
             // 계산해서 결과 쌍 얻어내기
             for (TestcaseInfoResponse testcase : testcaseList) {
                 String result = run(code, testcase.testcase()).get();
+                log.info(result);
                 outputList.add(result);
             }
 
