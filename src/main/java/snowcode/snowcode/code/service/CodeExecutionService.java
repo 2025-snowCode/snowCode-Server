@@ -29,7 +29,7 @@ import java.util.concurrent.Future;
 public class CodeExecutionService {
 
     // 작업 경로 고정
-    private static final Path WORK_DIR = Paths.get("/tmp/code-runner");
+    private static final Path WORK_DIR = Paths.get(".");
 
     @Async("taskExecutor") // 사용할 custom executor 지정
     public Future<String> run(String code, String testcase) throws IOException, InterruptedException {
