@@ -1,7 +1,6 @@
 package snowcode.snowcode.code.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +22,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 @Service
-@Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class CodeExecutionService {
@@ -42,10 +40,8 @@ public class CodeExecutionService {
             // 해당 소스코드 파일을 python3으로 실행하는 프로세스를 생성
             ProcessBuilder processBuilder = new ProcessBuilder("python3",
                     filePath.toString());
-            log.info("소스코드 실행: {}", filePath);
             Process process = processBuilder.start();
 
-            log.info("소스코드 실행 성공");
             try (BufferedWriter bw = new BufferedWriter(
                     new OutputStreamWriter(process.getOutputStream(), StandardCharsets.UTF_8))) {
                 bw.write(testcase);
@@ -65,10 +61,8 @@ public class CodeExecutionService {
         try {
             List<String> outputList = new ArrayList<>();
             // 계산해서 결과 쌍 얻어내기
-            log.info("시작");
             for (TestcaseInfoResponse testcase : testcaseList) {
                 String result = run(code, testcase.testcase()).get();
-                log.info("결과: {}", result);
                 outputList.add(result);
             }
 
@@ -117,7 +111,6 @@ public class CodeExecutionService {
         try {
             String filename = random + ".py";
             Path filePath = WORK_DIR.resolve(filename);
-            log.info("파일 만들기 시작: {}", filePath);
 
             Files.writeString(
                     filePath,
@@ -125,7 +118,6 @@ public class CodeExecutionService {
                     StandardOpenOption.CREATE,
                     StandardOpenOption.TRUNCATE_EXISTING
             );
-            log.info("파일 만들기 성공");
             return filePath;
         } catch (IOException e) {
             throw new SubmissionException(SubmissionErrorCode.FILE_CREATE_FAILED);

@@ -34,7 +34,7 @@ public class AssignmentController {
     private final AuthContext authContext;
 
     @PostMapping
-    @Operation(summary = "과제 추가 API", description = "과제 추가")
+    @Operation(summary = "과제 추가 API", description = "과제 추가, testcase(input) 존재하지 않을 시 null이 아닌 빈 값(\"\")으로 보내주세요!")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "과제 추가 성공",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = AssignmentInfoResponse.class))}),

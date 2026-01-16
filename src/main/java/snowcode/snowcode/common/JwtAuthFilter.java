@@ -49,7 +49,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
             // if swagger
 
-            if (isSwaggerRequest(request)) {
+            if (isSwaggerRequest(request)) { // FIXME : 개발 시에는 jwt 활용
                 jwt = authWithSwagger(request);
             } else {
                 // 쿠키용
@@ -108,7 +108,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     }
 
     private boolean isSwaggerRequest(HttpServletRequest request) {
-        String referer = request.getHeader("Referer");
-        return referer != null && referer.contains("/swagger-ui");
+//        String referer = request.getHeader("Referer");
+//        return referer != null && referer.contains("/swagger-ui");
+        return true;
     }
 }
