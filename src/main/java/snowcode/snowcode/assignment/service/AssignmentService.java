@@ -44,4 +44,10 @@ public class AssignmentService {
         Assignment assignment = findById(id);
         assignmentRepository.delete(assignment);
     }
+
+    public FindAssignmentListResponse findByCreatedBy(Long memberId) {
+        List<Assignment> assignmentList = assignmentRepository.findAllByCreatedBy(memberId);
+        List<FindAssignmentResponse> assignmentDtoList = assignmentList.stream().map(FindAssignmentResponse::from).toList();
+        return new FindAssignmentListResponse(assignmentList.size(), assignmentDtoList);
+    }
 }
