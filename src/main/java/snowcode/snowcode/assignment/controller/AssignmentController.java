@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.*;
 import snowcode.snowcode.assignment.dto.AssignmentCreateWithTestcaseRequest;
 import snowcode.snowcode.assignment.dto.AssignmentInfoResponse;
 import snowcode.snowcode.assignment.dto.AssignmentUpdateWithTestcaseRequest;
+import snowcode.snowcode.assignment.dto.FindAssignmentListResponse;
 import snowcode.snowcode.assignment.service.AssignmentDeleteFacade;
+import snowcode.snowcode.assignment.service.AssignmentService;
 import snowcode.snowcode.assignment.service.AssignmentWithTestcaseFacade;
 import snowcode.snowcode.assignmentRegistration.dto.RegistrationScheduleResponse;
 import snowcode.snowcode.assignmentRegistration.service.RegistrationScheduleService;
@@ -32,6 +34,7 @@ public class AssignmentController {
     private final AssignmentWithTestcaseFacade assignmentWithTestcaseFacade;
     private final AuthService authService;
     private final AuthContext authContext;
+    private final AssignmentService assignmentService;
 
     @PostMapping
     @Operation(summary = "과제 추가 API", description = "과제 추가, testcase(input) 존재하지 않을 시 null이 아닌 빈 값(\"\")으로 보내주세요!")
@@ -59,6 +62,19 @@ public class AssignmentController {
         authContext.isAssignmentOwner(assignmentId); // 인가
         AssignmentInfoResponse assignmentInfo = assignmentWithTestcaseFacade.findAssignmentInfo(assignmentId);
         return ResponseUtil.success(assignmentInfo);
+    }
+
+    @GetMapping("/my")
+    @Operation(summary = "전체 과제 조회 API", description = "내가 만든 전체 과제 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "전체 과제 조회 성공",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = FindAssignmentListResponse.class))}),
+    })
+    public BasicResponse<FindAssignmentListResponse> getAllMyAssignment() {
+        Long memberId = authService.loadMember().getId();
+        FindAssignmentListResponse assignmentList = assignmentService.findByCreatedBy(memberId);
+
+        return ResponseUtil.success(assignmentList);
     }
 
     @GetMapping("/schedule")
