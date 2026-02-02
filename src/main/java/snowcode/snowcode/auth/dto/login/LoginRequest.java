@@ -4,14 +4,14 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 
 public record LoginRequest(@NotBlank
-                           @Schema(description = "KAKAO", example = "KAKAO")
+                           @Schema(description = "KAKAO or LOCAL", example = "LOCAL")
                            String provider,
 
                            @Schema(description = "사용자 이름, 없다면 NULL로 넣어주세요!", example = "주아정")
                            String name,
 
                            @NotBlank
-                           @Schema(description = "role, ADMIN or USER", example = "USER")
+                           @Schema(description = "role, ADMIN or USER", example = "ADMIN")
                            String role,
 
                            @Schema(description = "학번 입력, USER인 경우에만 입력", example = "2313398")
