@@ -82,11 +82,9 @@ public class SwaggerConfig {
     private Schema<?> wrapSchema(Schema<?> originalSchema) {
         Schema<Object> wrapperSchema = new Schema<>();
 
-        wrapperSchema.addProperty("status",
-                new Schema<>().type("string").example("OK"));
-        wrapperSchema.addProperty("message",
-                new Schema<>().type("string").example("OK"));
-        wrapperSchema.addProperty("data", originalSchema);
+        wrapperSchema.addProperty("success",
+                new Schema<>().type("boolean").example(true));
+        wrapperSchema.addProperty("response", originalSchema);
 
         return wrapperSchema;
     }

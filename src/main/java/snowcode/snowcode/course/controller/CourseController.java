@@ -113,9 +113,14 @@ public class CourseController {
             @ApiResponse(responseCode = "200", description = "전체 강의 조회 성공",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = CourseCountListResponse.class))}),
             })
-    public BasicResponse<CourseCountListResponse> findMyCourses() {
+    public BasicResponse<CourseCountListResponse> findMyCourses(@RequestParam(required = false) String title) {
         Long memberId = authService.loadMember().getId();
-        CourseCountListResponse myCourses = courseWithEnrollmentFacade.findMyCourses(memberId);
+        CourseCountListResponse myCourses;
+        if (title == null || title.isBlank()) {
+            myCourses = courseWithEnrollmentFacade.findMyCourses(memberId);
+        } else {
+            myCourses = courseWithEnrollmentFacade.findMyCourses(memberId, title);
+        }
         return ResponseUtil.success(myCourses);
     }
 
