@@ -23,6 +23,6 @@ public class WebSocketConfig implements WebSocketConfigurer {
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         registry.addHandler(webSocketChatHandler, "/ws/conn")
                 .addInterceptors(jwtHandshakeInterceptor)
-                .setAllowedOriginPatterns(frontend);
+                .setAllowedOriginPatterns(frontend, "http://localhost:8080", "http://localhost:5173");
     }
 }
