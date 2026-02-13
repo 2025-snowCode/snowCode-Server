@@ -20,8 +20,8 @@ import java.util.List;
 @Configuration
 public class SwaggerConfig {
 
-    @Value("${cors.allowed.frontend}")
-    private String frontend;
+    @Value("${cors.allowed.server}")
+    private String server;
 
     @Bean
     public OpenAPI openAPI() {
@@ -41,7 +41,7 @@ public class SwaggerConfig {
                 .components(components)
                 .servers(List.of(
                         new Server()
-                                .url(frontend)
+                                .url(server)
                                 .description("Production 서버")
                 ));
     }
