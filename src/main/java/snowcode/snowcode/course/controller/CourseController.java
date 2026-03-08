@@ -60,7 +60,7 @@ public class CourseController {
     }
 
     @GetMapping("/{courseId}/assignments")
-    @Operation(summary = "강의별 전체 과제 조회 API", description = "title이 같은 강의별 전체 과제 조회 (분반, 학기 등 상관 없음)")
+    @Operation(summary = "강의별 전체 과제 조회 API", description = "강의별 전체 과제 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "강의별 전체 과제 조회 성공",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = CourseCountWithAssignmentResponse.class))}),
