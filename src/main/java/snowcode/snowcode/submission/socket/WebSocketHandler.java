@@ -17,6 +17,7 @@ import snowcode.snowcode.common.response.ResponseUtil;
 import snowcode.snowcode.submission.dto.CodeRequestSocket;
 import snowcode.snowcode.submission.exception.SubmissionException;
 
+import java.io.BufferedWriter;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -46,16 +47,27 @@ public class WebSocketHandler extends TextWebSocketHandler {
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         try {
             String payload = message.getPayload();
-//            log.info("payload {}", payload);
 
             CodeRequestSocket dto = mapper.readValue(payload, CodeRequestSocket.class);
 
             // 로직 실행
-            String result = codeExecutionService.run(dto.code(), dto.input()).get();
+            // 처음 코드를 실행하는 요청인 경우
+            if (dto.type().equals("RUN")) {
+                new Thread(() -> {
+                    codeExecutionService.runRealtime(dto.code(), session, mapper);
+                }).start();
 
-            // 성공 응답
-            String jsonResponse = mapper.writeValueAsString(ResponseUtil.success(result));
-            session.sendMessage(new TextMessage(jsonResponse));
+            } else {
+
+                BufferedWriter writer = (BufferedWriter) session.getAttributes().get("writer");
+
+                if (writer != null) {
+                    writer.write(dto.input());
+                    writer.newLine();
+                    writer.flush();
+                }
+            }
+
 
         } catch (SubmissionException e) {
             log.error("Submission Exception({}) = {}, 코드 실행 실패", e.getCode(), e.getMessage());
