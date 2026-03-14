@@ -150,10 +150,8 @@ public class CourseController {
     @GetMapping("/{courseId}/edit")
     @Operation(summary = "개별 강의 조회 API", description = "강의 수정용 API")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "전체 단원 조회 성공",
-                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = UnitWithAssignmentResponse.class))}),
-            @ApiResponse(responseCode = "404", description = "단원이 존재하지 않습니다.",
-                    content = {@Content(schema = @Schema(implementation = BasicResponse.class))}),
+            @ApiResponse(responseCode = "200", description = "개별 강의 조회 성공",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = CourseResponse.class))}),
     })
     public BasicResponse<CourseResponse> findCourseByCourseId(@PathVariable Long courseId) {
         authContext.isCourseOwner(courseId); // 인가
