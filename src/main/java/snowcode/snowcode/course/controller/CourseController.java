@@ -15,6 +15,7 @@ import snowcode.snowcode.auth.service.AuthContext;
 import snowcode.snowcode.auth.service.AuthService;
 import snowcode.snowcode.common.response.BasicResponse;
 import snowcode.snowcode.common.response.ResponseUtil;
+import snowcode.snowcode.course.domain.Course;
 import snowcode.snowcode.course.dto.*;
 import snowcode.snowcode.course.service.CourseService;
 import snowcode.snowcode.course.service.CourseWithEnrollmentFacade;
@@ -144,6 +145,20 @@ public class CourseController {
             CourseDetailStudentResponse course = courseWithMemberFacade.createStudentCourseResponse(member.getId(), courseId);
             return ResponseUtil.success(course);
         }
+    }
+
+    @GetMapping("/{courseId}/edit")
+    @Operation(summary = "개별 강의 조회 API", description = "강의 수정용 API")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "전체 단원 조회 성공",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = UnitWithAssignmentResponse.class))}),
+            @ApiResponse(responseCode = "404", description = "단원이 존재하지 않습니다.",
+                    content = {@Content(schema = @Schema(implementation = BasicResponse.class))}),
+    })
+    public BasicResponse<CourseResponse> findCourseByCourseId(@PathVariable Long courseId) {
+        authContext.isCourseOwner(courseId); // 인가
+        Course course = courseService.findCourse(courseId);
+        return ResponseUtil.success(CourseResponse.from(course));
     }
 
     @GetMapping("/{courseId}/units")
