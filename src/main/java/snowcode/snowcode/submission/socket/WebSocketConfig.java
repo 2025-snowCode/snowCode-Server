@@ -15,6 +15,9 @@ public class WebSocketConfig implements WebSocketConfigurer {
     @Value("${cors.allowed.frontend}")
     private String frontend;
 
+    @Value("${cors.allowed.server}")
+    private String server;
+
     private final WebSocketHandler webSocketChatHandler;
     private final JwtHandshakeInterceptor jwtHandshakeInterceptor;
 
@@ -23,6 +26,6 @@ public class WebSocketConfig implements WebSocketConfigurer {
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         registry.addHandler(webSocketChatHandler, "/ws/conn")
                 .addInterceptors(jwtHandshakeInterceptor)
-                .setAllowedOriginPatterns(frontend, "http://localhost:8080", "http://localhost:5173");
+                .setAllowedOriginPatterns(frontend, server, "http://localhost:8080", "http://localhost:5173");
     }
 }

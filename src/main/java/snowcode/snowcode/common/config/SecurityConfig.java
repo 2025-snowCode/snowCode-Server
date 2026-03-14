@@ -37,6 +37,9 @@ public class SecurityConfig {
     @Value("${cors.allowed.frontend}")
     private String frontend;
 
+    @Value("${cors.allowed.server}")
+    private String server;
+
     private static final String[] AUTH_WHITELIST = {
             "/swagger-ui/**", "/oauth2/authorization", "/api-docs", "/members", "/health",
             "/v3/api-docs/**", "/swagger-ui.html", "/oauth2/authorization", "/auth/apple/callback", "/error"
@@ -99,7 +102,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:8080", "http://localhost:5173", frontend));
+        config.setAllowedOrigins(List.of("http://localhost:8080", "http://localhost:5173", frontend, server));
         config.setAllowedMethods(List.of("GET","POST","PUT","DELETE","PATCH", "OPTIONS"));
 //        config.setAllowedHeaders(List.of("*"));
         config.setAllowedHeaders(Arrays.asList(
