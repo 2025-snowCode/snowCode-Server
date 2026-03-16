@@ -96,7 +96,7 @@ public class SubmissionController {
         
             - Postman → WebSocket 탭 -> \n
             - wss://{backURL}/ws/conn (https용) \n
-            - Header -> Authorization: Bearer {JWT}  \n
+            - QueryString -> token?=JWT  \n
             - Body(JSON) -> 위 예시 입력 \n
             - 블로그 참조 : https://senslife.tistory.com/52 \n
             \n
