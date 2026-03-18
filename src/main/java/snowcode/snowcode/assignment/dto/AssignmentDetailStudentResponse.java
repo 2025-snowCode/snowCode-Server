@@ -8,5 +8,8 @@ public record AssignmentDetailStudentResponse(
         @Schema(description = "과제명", example = "파이썬으로 계산기 구현하기")
         String title,
         @Schema(description = "제출여부", example = "NOT_SUBMITTED")
-        String submittedStatus) {
+        String submittedStatus,
+        @Schema(description = "제출 코드 id", example = "1")
+        Long codeId
+        ) {
 }

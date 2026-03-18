@@ -33,6 +33,10 @@ public class CodeService {
         );
     }
 
+    public Long findBySubmissionId(Long submissionId) {
+        return codeRepository.findCodeBySubmissionId(submissionId).getId();
+    }
+
     public CodeResponse findCode(Long id) {
         Code code = findById(id);
         return CodeResponse.from(code);
