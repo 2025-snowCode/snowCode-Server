@@ -8,6 +8,7 @@ import snowcode.snowcode.assignment.dto.AssignmentDetailAdminResponse;
 import snowcode.snowcode.assignment.dto.AssignmentDetailStudentResponse;
 import snowcode.snowcode.assignmentRegistration.domain.AssignmentRegistration;
 import snowcode.snowcode.assignmentRegistration.service.RegistrationService;
+import snowcode.snowcode.code.service.CodeService;
 import snowcode.snowcode.submission.domain.Submission;
 import snowcode.snowcode.submission.domain.SubmissionStatus;
 
@@ -20,11 +21,18 @@ public class SubmissionWithAssignmentFacade {
 
     private final RegistrationService registrationService;
     private final SubmissionPickLastService submissionPickLastService;
+    private final CodeService codeService;
 
     public AssignmentDetailStudentResponse createStudentAssignmentResponse(Long memberId, AssignmentRegistration registration) {
         Assignment assignment = registration.getAssignment();
-        String status = getSubmissionStatus(memberId, registration).toString();
-        return new AssignmentDetailStudentResponse(assignment.getId(), assignment.getTitle(), status);
+        Optional<Submission> submitted = submissionPickLastService.isSubmitted(memberId, registration);
+        String status = getSubmissionStatus(submitted, registration).toString();
+        // 코드 찾기
+        Long codeId = 0L;
+        if (submitted.isPresent()) {
+            codeId = codeService.findBySubmissionId(submitted.get().getId());
+        }
+        return new AssignmentDetailStudentResponse(assignment.getId(), assignment.getTitle(), status, codeId);
     }
 
     public AssignmentDetailAdminResponse createAdminAssignmentResponse(Long registrationId) {
@@ -33,8 +41,8 @@ public class SubmissionWithAssignmentFacade {
         return new AssignmentDetailAdminResponse(assignment.getId(), assignment.getTitle());
     }
 
-    private SubmissionStatus getSubmissionStatus(Long memberId, AssignmentRegistration registration) {
-        Optional<Submission> submitted = submissionPickLastService.isSubmitted(memberId, registration);
+    private SubmissionStatus getSubmissionStatus(Optional<Submission> submitted, AssignmentRegistration registration) {
+
         return submitted
                 .map(s -> s.getScore() == registration.getAssignment().getScore() ? SubmissionStatus.CORRECT : SubmissionStatus.INCORRECT)
                 .orElse(SubmissionStatus.NOT_SUBMITTED);

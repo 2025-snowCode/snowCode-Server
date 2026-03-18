@@ -8,4 +8,5 @@ import java.util.List;
 public interface CodeRepository extends JpaRepository<Code, Long> {
 
     void deleteAllBySubmissionIdIn(List<Long> submissionIdIn);
+    Code findCodeBySubmissionId(Long submissionId);
 }
