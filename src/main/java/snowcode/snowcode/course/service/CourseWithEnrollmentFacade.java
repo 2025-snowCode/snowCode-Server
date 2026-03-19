@@ -57,13 +57,20 @@ public class CourseWithEnrollmentFacade {
         return CourseResponse.from(course);
     }
 
-    public void addStudentWithEnroll(Long courseId, StudentRequest dto) {
+    public void addStudentWithEnroll(Member admin, Long courseId, StudentRequest dto) {
         Member student = studentService.findByStudentId(dto.studentId());
         Course course = courseService.findCourse(courseId);
         boolean isAlreadyEnrolled = enrollmentService.isAlreadyEnrolled(courseId, student.getId());
 
         if (isAlreadyEnrolled) throw new AuthException(AuthErrorCode.IS_ALREADY_ENROLLED_STUDENT);
         enrollmentService.createEnrollment(student, course);
+
+        // 학생 추가 시 채팅방도 추가
+        Long adminId = admin.getId();
+        Long studentId = student.getId();
+        if (adminId != studentId && !chatRoomService.isPresentChatRoom(adminId, studentId)) {
+            chatRoomFacade.createChatRoom(admin, student);
+        }
     }
 
     public void deleteCourseAndEnrollment(Long courseId) {
