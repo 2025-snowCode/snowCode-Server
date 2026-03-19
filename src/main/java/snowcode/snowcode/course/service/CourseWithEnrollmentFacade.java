@@ -7,6 +7,8 @@ import snowcode.snowcode.assignmentRegistration.service.RegistrationService;
 import snowcode.snowcode.auth.domain.Member;
 import snowcode.snowcode.auth.exception.AuthErrorCode;
 import snowcode.snowcode.auth.exception.AuthException;
+import snowcode.snowcode.chatRoom.service.ChatRoomFacade;
+import snowcode.snowcode.chatRoom.service.ChatRoomService;
 import snowcode.snowcode.course.domain.Course;
 import snowcode.snowcode.course.dto.CourseCountListResponse;
 import snowcode.snowcode.course.dto.CourseListResponse;
@@ -32,12 +34,26 @@ public class CourseWithEnrollmentFacade {
     private final UnitService unitService;
     private final StudentService studentService;
     private final RegistrationService registrationService;
+    private final ChatRoomService chatRoomService;
+    private final ChatRoomFacade chatRoomFacade;
 
-    public CourseResponse createCourseWithEnroll(Member member, CourseRequest dto) {
-        Course course = courseService.createCourse(member.getId(), dto);
-        List<Member> members = studentService.findStudents(dto.students());
-        studentService.addAdminInMembers(member, members);
-        enrollmentService.createEnrollment(members, course);
+    public CourseResponse createCourseWithEnroll(Member admin, CourseRequest dto) {
+        // 강의-수강-학생 등록
+        Course course = courseService.createCourse(admin.getId(), dto);
+        List<Member> students = studentService.findStudents(dto.students());
+        studentService.addAdminInMembers(admin, students);
+        enrollmentService.createEnrollment(students, course);
+
+        // 채팅방 생성
+        for (Member student : students) {
+            // 채팅방 하나 생성
+            // student, member 각각 채팅 참여자 생성 // FIXME - 동시성 이슈
+            Long adminId = admin.getId();
+            Long studentId = student.getId();
+            if (adminId != studentId && !chatRoomService.isPresentChatRoom(adminId, studentId)) {
+                chatRoomFacade.createChatRoom(admin, student);
+            }
+        }
         return CourseResponse.from(course);
     }
 

@@ -23,6 +23,10 @@ public class StudentService {
                 .orElseThrow(() -> new AuthException(AuthErrorCode.STUDENT_NOT_FOUND));
     }
 
+    public boolean isPresentStudentId(String studentId) {
+        return memberRepository.findByStudentId(studentId).isPresent();
+    }
+
     public List<Member> findStudents(List<StudentRequest> students) {
         if (students == null) return new ArrayList<>();
         List<String> studentIds = extractStudentIdsFromDto(students);

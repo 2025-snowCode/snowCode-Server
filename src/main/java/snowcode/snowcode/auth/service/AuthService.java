@@ -14,10 +14,13 @@ import snowcode.snowcode.auth.domain.Member;
 import snowcode.snowcode.auth.domain.Role;
 import snowcode.snowcode.auth.dto.login.*;
 import snowcode.snowcode.auth.dto.login.kakao.KakaoUserResponse;
+import snowcode.snowcode.auth.exception.AuthErrorCode;
+import snowcode.snowcode.auth.exception.AuthException;
 import snowcode.snowcode.auth.exception.TokenErrorCode;
 import snowcode.snowcode.auth.exception.TokenException;
 import snowcode.snowcode.auth.repository.MemberRepository;
 import snowcode.snowcode.refreshToken.service.RefreshTokenService;
+import snowcode.snowcode.student.service.StudentService;
 
 import java.security.GeneralSecurityException;
 import java.time.LocalDateTime;
@@ -33,6 +36,8 @@ public class AuthService {
     private final CookieUtil cookieUtil;
     private final WebClient webClient;
     private final RefreshTokenService refreshTokenService;
+    private final MemberService memberService;
+    private final StudentService studentService;
 
 
     @Transactional
@@ -78,6 +83,10 @@ public class AuthService {
 
     @Transactional
     public Member signUp(LoginRequest dto, UserResponse userResponse) {
+        // 이미 학번이 있다면
+        if (!dto.role().equalsIgnoreCase("ADMIN") && studentService.isPresentStudentId(dto.studentId())) {
+            throw new AuthException(AuthErrorCode.DUPLICATE_STUDENT_ID);
+        }
         Member member = Member.createMember(dto, userResponse);
         memberRepository.save(member);
         return member;
