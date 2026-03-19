@@ -28,7 +28,7 @@ public class Member extends BaseTimeEntity {
     @Column(nullable = false)
     private Role role;
 
-    @Column(name = "student_id")
+    @Column(name = "student_id", unique = true)
     private String studentId;
 
     private String email;
@@ -50,7 +50,12 @@ public class Member extends BaseTimeEntity {
     }
 
     public static Member createMember(LoginRequest dto, UserResponse userResponse) {
-        return new Member(UUID.randomUUID(), dto.name() != null ? dto.name() : String.valueOf(UUID.randomUUID()), Role.of(dto.role()), dto.studentId(), dto.provider().equals("LOCAL") ? dto.email() : userResponse.email(), dto.provider(), userResponse.providerId());
+        return new Member(UUID.randomUUID(), dto.name() != null ? dto.name() : String.valueOf(UUID.randomUUID()),
+                Role.of(dto.role()),
+                dto.role().equalsIgnoreCase("ADMIN") ? null : dto.studentId(),
+                dto.provider().equals("LOCAL") ? dto.email() : userResponse.email(),
+                dto.provider(),
+                userResponse.providerId());
     }
 
 

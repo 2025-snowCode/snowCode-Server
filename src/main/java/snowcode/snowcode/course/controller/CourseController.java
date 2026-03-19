@@ -56,6 +56,7 @@ public class CourseController {
         authContext.isAdmin();
 
         Member member = authService.loadMember();
+        // 강의 생성
         CourseResponse course = courseWithEnrollmentFacade.createCourseWithEnroll(member, dto);
         return ResponseUtil.success(course);
     }
