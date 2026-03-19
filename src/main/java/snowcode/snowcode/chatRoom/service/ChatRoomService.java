@@ -23,7 +23,7 @@ public class ChatRoomService {
         return chatRoomRepository.findChatRoomByMembers(adminId, studentId);
     }
 
-    public boolean isPresentChatRoom(Long adminId, Long studentId) {
-        return findChatRoomByMembers(adminId, studentId).isPresent();
+    public boolean isNotPresentChatRoom(Long adminId, Long studentId) {
+        return findChatRoomByMembers(adminId, studentId).isEmpty();
     }
 }
