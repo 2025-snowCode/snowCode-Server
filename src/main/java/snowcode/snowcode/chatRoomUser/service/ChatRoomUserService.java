@@ -24,4 +24,8 @@ public class ChatRoomUserService {
         chatRoomUserRepository.saveAll(List.of(chatRoomUserByAdmin, chatRoomUserByUser));
     }
 
+    public List<ChatRoomUser> findChatRoomUserByChatRoomId(Long chatRoomId) {
+        return chatRoomUserRepository.findByChatRoomId(chatRoomId);
+    }
+
 }

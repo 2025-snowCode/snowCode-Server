@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import snowcode.snowcode.chatRoom.domain.ChatRoom;
+import snowcode.snowcode.chatRoom.exception.ChatRoomErrorCode;
+import snowcode.snowcode.chatRoom.exception.ChatRoomException;
 import snowcode.snowcode.chatRoom.repository.ChatRoomRepository;
 
 import java.util.Optional;
@@ -25,5 +27,10 @@ public class ChatRoomService {
 
     public boolean isNotPresentChatRoom(Long adminId, Long studentId) {
         return findChatRoomByMembers(adminId, studentId).isEmpty();
+    }
+
+    public ChatRoom findByChatRoomId(Long chatRoomId) {
+        return chatRoomRepository.findById(chatRoomId)
+                .orElseThrow(() ->  new ChatRoomException(ChatRoomErrorCode.NOT_FOUND_CHAT_ROOM));
     }
 }
