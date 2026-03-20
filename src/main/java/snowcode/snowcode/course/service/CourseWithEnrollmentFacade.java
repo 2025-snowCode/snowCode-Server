@@ -50,7 +50,7 @@ public class CourseWithEnrollmentFacade {
             // student, member 각각 채팅 참여자 생성 // FIXME - 동시성 이슈
             Long adminId = admin.getId();
             Long studentId = student.getId();
-            if (adminId != studentId && !chatRoomService.isPresentChatRoom(adminId, studentId)) {
+            if (adminId != studentId && chatRoomService.isNotPresentChatRoom(adminId, studentId)) {
                 chatRoomFacade.createChatRoom(admin, student);
             }
         }
@@ -68,7 +68,7 @@ public class CourseWithEnrollmentFacade {
         // 학생 추가 시 채팅방도 추가
         Long adminId = admin.getId();
         Long studentId = student.getId();
-        if (adminId != studentId && !chatRoomService.isPresentChatRoom(adminId, studentId)) {
+        if (adminId != studentId && chatRoomService.isNotPresentChatRoom(adminId, studentId)) {
             chatRoomFacade.createChatRoom(admin, student);
         }
     }
