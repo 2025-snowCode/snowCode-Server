@@ -19,6 +19,6 @@ public record ChatListResponse(
 ) {
 
         public static ChatListResponse of (Chat chat) {
-                return new ChatListResponse(chat.getId(), chat.getSenderId(), chat.getType().toString(), chat.getContent(), chat.getCreatedAt());
+                return new ChatListResponse(chat.getId(), chat.getSenderId(), chat.getType().toString(), chat.getContent(), chat.getSendAt());
         }
 }

@@ -28,7 +28,7 @@ public class ChatRoomController {
     private final ChatRoomFacade chatRoomFacade;
 
     @GetMapping("/{chatRoomId}")
-    @Operation(summary = "채팅방 조회 API", description = "채팅 조회 API")
+    @Operation(summary = "채팅방 조회 API", description = "채팅방 조회 API")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "채팅방 조회에 성공하였습니다.",
                     content = @Content(
