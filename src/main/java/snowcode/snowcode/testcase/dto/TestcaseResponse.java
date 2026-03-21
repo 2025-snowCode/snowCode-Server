@@ -10,12 +10,10 @@ public record TestcaseResponse(
         String testcase,
         @Schema(description = "테스트케이스 정답", example = "3")
         String answer,
-        @Schema(description = "테스트케이스/예제", example = "TESTCASE")
-        String role,
         @Schema(description = "공개 여부", example = "false")
         boolean isPublic) {
 
     public static TestcaseResponse from (Testcase testcase) {
-        return new TestcaseResponse(testcase.getId(), testcase.getTestcase(), testcase.getAnswer(), testcase.getRole().toString(), testcase.isPublic());
+        return new TestcaseResponse(testcase.getId(), testcase.getTestcase(), testcase.getAnswer(),testcase.isPublic());
     }
 }

@@ -21,10 +21,6 @@ public class Testcase {
     @Column(nullable = false)
     private String answer;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private ExampleRole role;
-
     @Column(name = "is_public", nullable = false)
     private boolean isPublic;
 
@@ -32,15 +28,14 @@ public class Testcase {
     @JoinColumn(name = "assignment_id", nullable = false)
     private Assignment assignment;
 
-    private Testcase(Assignment assignment, String testcase, String answer, ExampleRole role, boolean isPublic) {
+    private Testcase(Assignment assignment, String testcase, String answer, boolean isPublic) {
         this.assignment = assignment;
         this.testcase = testcase;
         this.answer = answer;
-        this.role = role;
         this.isPublic = isPublic;
     }
 
-    public static Testcase createTestCase(Assignment assignment, String testcase, String answer, ExampleRole role, boolean isPublic) {
-        return new Testcase(assignment, testcase, answer, role, isPublic);
+    public static Testcase createTestCase(Assignment assignment, String testcase, String answer, boolean isPublic) {
+        return new Testcase(assignment, testcase, answer, isPublic);
     }
 }
