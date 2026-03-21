@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import snowcode.snowcode.submission.dto.JudgeResultDto;
 import snowcode.snowcode.submission.exception.SubmissionErrorCode;
 import snowcode.snowcode.submission.exception.SubmissionException;
 import snowcode.snowcode.testcase.dto.TestcaseInfoResponse;
@@ -57,7 +58,8 @@ public class CodeExecutionService {
         }
     }
 
-    public int judgeSubmission(List<TestcaseInfoResponse> testcaseList, String code, int totalScore) {
+    public JudgeResultDto judgeSubmission(List<TestcaseInfoResponse> testcaseList, String code, int totalScore) {
+        // 모두 맞은 경우, 공개 TC가 틀린 경우, 비공개 TC가 틀린 경우
         try {
             List<String> outputList = new ArrayList<>();
             // 계산해서 결과 쌍 얻어내기
@@ -67,7 +69,21 @@ public class CodeExecutionService {
             }
 
             // 맞는지 검사 후 점수 계산
-            return calcScore(testcaseList, outputList, totalScore);
+            int passCount = calcScore(testcaseList, outputList);
+            JudgeResultDto dto;
+            // 다 맞은 경우
+            if (testcaseList.size() == passCount) {
+                dto = new JudgeResultDto(totalScore, testcaseList.size(), passCount, 0L, null, null);
+            } else { // 비공개 TC가 틀린 경우 or 공개 TC가 틀린 경우
+                TestcaseInfoResponse testcase = testcaseList.get(passCount);
+                if (!testcase.isPublic()) {
+                    dto = new JudgeResultDto(totalScore, testcaseList.size(), passCount, testcase.id(), null, null);
+                    return dto;
+                }
+                String output = outputList.get(passCount);
+                dto = new JudgeResultDto(totalScore, testcaseList.size(), passCount, testcase.id(), output, testcase.answer());
+            }
+            return dto;
 
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
@@ -80,17 +96,17 @@ public class CodeExecutionService {
         }
     }
 
-    private int calcScore(List<TestcaseInfoResponse> testcaseList, List<String> outputList, int totalScore) {
+    private int calcScore(List<TestcaseInfoResponse> testcaseList, List<String> outputList) {
         // 계산
         int totalScoreSize = testcaseList.size();
-        int scoreSize = 0;
+        int passCount = 0;
 
         for (int i=0; i<totalScoreSize; i++) {
             if (testcaseList.get(i).answer().equals(outputList.get(i))) {
-                scoreSize++;
-            }
+                passCount++;
+            } else break;
         }
-        return scoreSize * totalScore / totalScoreSize;
+        return passCount;
     }
 
     private String getOutput(BufferedReader bufferedReader) throws IOException {
