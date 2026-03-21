@@ -25,8 +25,8 @@ public class Chat {
     @Enumerated(EnumType.STRING)
     private ChatType type;
 
-    @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @Column(name = "send_at", updatable = false)
+    private LocalDateTime sendAt = LocalDateTime.now();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chat_room_id")
