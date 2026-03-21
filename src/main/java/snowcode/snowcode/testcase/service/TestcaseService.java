@@ -38,7 +38,7 @@ public class TestcaseService {
             return testcaseInfoResponseList;
         }
         for (TestcaseCreateRequest dto : dtoList) {
-            Testcase testCase = Testcase.createTestCase(assignment, dto.testcase(), dto.answer(), ExampleRole.EXAMPLE, true);
+            Testcase testCase = Testcase.createTestCase(assignment, dto.testcase(), dto.answer(), ExampleRole.EXAMPLE, dto.isPublic());
             testcaseRepository.save(testCase);
             testcaseInfoResponseList.add(TestcaseInfoResponse.of(testCase));
         }
@@ -70,7 +70,7 @@ public class TestcaseService {
 
         List<TestcaseInfoResponse> dtoList = new ArrayList<>();
         for (Testcase testcase : testcases) {
-            dtoList.add(new TestcaseInfoResponse(testcase.getId(), testcase.getTestcase(), testcase.getAnswer()));
+            dtoList.add(TestcaseInfoResponse.of(testcase));
         }
         return dtoList;
     }
