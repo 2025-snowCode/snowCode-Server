@@ -8,6 +8,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import snowcode.snowcode.assignment.domain.Assignment;
+import snowcode.snowcode.assignment.service.AssignmentService;
 import snowcode.snowcode.assignmentRegistration.domain.AssignmentRegistration;
 import snowcode.snowcode.assignmentRegistration.service.RegistrationService;
 import snowcode.snowcode.auth.domain.Member;
@@ -26,6 +28,7 @@ public class SubmissionController {
     private final SubmissionWithCodeFacade submissionWithCodeFacade;
     private final RegistrationService registrationService;
     private final AuthService authService;
+    private final AssignmentService assignmentService;
 
     @PostMapping("/{unitId}/{assignmentId}/code")
     @Operation(summary = "코드 제출 API", description = """
@@ -38,8 +41,9 @@ public class SubmissionController {
     })
     public BasicResponse<SubmissionResponse> createSubmission(@PathVariable Long unitId, @PathVariable Long assignmentId, @RequestBody CodeRequest dto) {
         Member member = authService.loadMember();
+        Assignment assignment = assignmentService.findById(assignmentId);
         AssignmentRegistration assignmentRegistration = registrationService.findByUnitIdAndAssignmentId(unitId, assignmentId);
-        SubmissionResponse submission = submissionWithCodeFacade.createSubmissionWithCode(member, assignmentRegistration, dto);
+        SubmissionResponse submission = submissionWithCodeFacade.createSubmissionWithCode(member, assignment, assignmentRegistration, dto);
         return ResponseUtil.success(submission);
     }
 
