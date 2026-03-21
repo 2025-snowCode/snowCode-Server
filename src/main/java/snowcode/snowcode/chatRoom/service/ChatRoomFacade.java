@@ -16,6 +16,7 @@ import snowcode.snowcode.chatRoomUser.domain.ChatRoomUser;
 import snowcode.snowcode.chatRoomUser.service.ChatRoomUserService;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -57,19 +58,25 @@ public class ChatRoomFacade {
 
     public ChatRoomListResponseWithCount findChatRoomList(Member member) {
         // memberId로 ChatRoomUser list 찾기
-        List<ChatRoomUser> chatRoomUserList = chatRoomUserService.findListByMemberId(member.getId());
+        List<ChatRoomUser> myChatRoomList = chatRoomUserService.findListByMemberId(member.getId());
+
         // chatRoomIdList로 변환
-        List<ChatRoom> chatRoomList = chatRoomUserList.stream().map(ChatRoomUser::getChatRoom).toList();
+        List<ChatRoom> chatRoomList = myChatRoomList.stream().map(ChatRoomUser::getChatRoom).toList();
         List<Long> chatRoomIdList = chatRoomList.stream().map(ChatRoom::getId).toList();
-        // chatRoomIdList로 상대 회원 id 찾기 (한 번에) -> map으로 매칭 (Map<채팅방Id, 상대회원Id>)
-        Map<Long, Long> mappedChatIdAndMemberId = chatRoomUserService.findMemberIdByChatId(member.getId(), chatRoomIdList);
-        // 돌면서 ChatRoomListResponse 생성 (chatRoom, 채팅 참여자)
-        List<ChatRoomListResponse> chatRoomListResponseList = new ArrayList<>();
-        for (Map.Entry<Long, Long> entry : mappedChatIdAndMemberId.entrySet()) {
-            ChatRoom chatRoom = chatRoomService.findByChatRoomId(entry.getKey());
-            Member opponent = memberService.findMember(entry.getValue());
-            chatRoomListResponseList.add(ChatRoomListResponse.of(chatRoom, opponent));
-        }
+
+        // chatRoomIdList로 상대 회원 id 찾기 (한 번에) -> map으로 매칭 (Map<채팅방Id, ChatRoomListResponse>)
+        Map<Long, ChatRoomListResponse> mappedChatIdAndMemberId = chatRoomUserService.findMemberIdByChatId(member, chatRoomIdList);
+
+        // chatRoomListResponse만 List로 변환
+        List<ChatRoomListResponse> chatRoomListResponseList = new ArrayList<>(mappedChatIdAndMemberId.values());
+        chatRoomListResponseList.sort(
+                Comparator.comparing(
+                        ChatRoomListResponse::lastSentAt,
+                        Comparator.nullsLast(Comparator.reverseOrder())
+                )
+        );
+
+        // 최신순으로 정렬
         return ChatRoomListResponseWithCount.of(chatRoomListResponseList);
     }
 }
