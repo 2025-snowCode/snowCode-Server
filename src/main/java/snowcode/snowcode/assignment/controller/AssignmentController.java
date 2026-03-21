@@ -59,7 +59,7 @@ public class AssignmentController {
                     content = {@Content(schema = @Schema(implementation = BasicResponse.class))}),
     })
     public BasicResponse<AssignmentInfoResponse> getDetailAssignment(@PathVariable Long assignmentId) {
-        authContext.isAssignmentOwner(assignmentId); // 인가
+//        authContext.isAssignmentOwner(assignmentId); // 인가
         AssignmentInfoResponse assignmentInfo = assignmentWithTestcaseFacade.findAssignmentInfo(assignmentId);
         return ResponseUtil.success(assignmentInfo);
     }
