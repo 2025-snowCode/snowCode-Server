@@ -6,12 +6,14 @@ import snowcode.snowcode.testcase.domain.Testcase;
 public record TestcaseInfoResponse(
         @Schema(description = "테스트케이스 id", example = "1")
         Long id,
+        @Schema(description = "공개 여부", example = "true")
+        boolean isPublic,
         @Schema(description = "테스트케이스 문제", example = "1 2")
         String testcase,
         @Schema(description = "테스트케이스 정답", example = "3")
         String answer) {
 
     public static TestcaseInfoResponse of(Testcase testcase) {
-        return new TestcaseInfoResponse(testcase.getId(), testcase.getTestcase(), testcase.getAnswer());
+        return new TestcaseInfoResponse(testcase.getId(), testcase.isPublic(), testcase.getTestcase(), testcase.getAnswer());
     }
 }
