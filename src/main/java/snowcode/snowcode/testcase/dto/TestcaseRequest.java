@@ -9,8 +9,6 @@ public record TestcaseRequest(
         @NotBlank String testcase,
         @Schema(description = "테스트케이스 정답", example = "3")
         @NotBlank String answer,
-        @Schema(description = "테스트케이스/예시 중 하나 택", example = "EXAMPLE")
-        @NotBlank String role,
-        @Schema(description = "공개 여부 (true이면 공개)", example = "false")
+        @Schema(description = "공개 여부 (true이면 공개)", example = "true")
         @NotNull boolean isPublic) {
 }

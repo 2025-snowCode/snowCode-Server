@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import snowcode.snowcode.assignment.domain.Assignment;
-import snowcode.snowcode.testcase.domain.ExampleRole;
 import snowcode.snowcode.testcase.domain.Testcase;
 import snowcode.snowcode.testcase.dto.TestcaseCreateRequest;
 import snowcode.snowcode.testcase.dto.TestcaseInfoResponse;
@@ -26,7 +25,7 @@ public class TestcaseService {
 
     @Transactional
     public TestcaseResponse createTestcase(Assignment assignment, TestcaseRequest dto) {
-        Testcase testcase = Testcase.createTestCase(assignment, dto.testcase(), dto.answer(), ExampleRole.of(dto.role()), dto.isPublic());
+        Testcase testcase = Testcase.createTestCase(assignment, dto.testcase(), dto.answer(), dto.isPublic());
         testcaseRepository.save(testcase);
         return TestcaseResponse.from(testcase);
     }
@@ -38,7 +37,7 @@ public class TestcaseService {
             return testcaseInfoResponseList;
         }
         for (TestcaseCreateRequest dto : dtoList) {
-            Testcase testCase = Testcase.createTestCase(assignment, dto.testcase(), dto.answer(), ExampleRole.EXAMPLE, dto.isPublic());
+            Testcase testCase = Testcase.createTestCase(assignment, dto.testcase(), dto.answer(), dto.isPublic());
             testcaseRepository.save(testCase);
             testcaseInfoResponseList.add(TestcaseInfoResponse.of(testCase));
         }
