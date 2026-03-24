@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import snowcode.snowcode.chat.dto.ChatMessageRequest;
 import snowcode.snowcode.chatRoom.domain.ChatRoom;
 
 import java.time.LocalDateTime;
@@ -39,7 +40,7 @@ public class Chat {
         this.chatRoom = chatRoom;
     }
 
-    public static Chat createChat(String content, Long senderId, String type, ChatRoom chatRoom) {
-        return new Chat(content, senderId, ChatType.of(type), chatRoom);
+    public static Chat createChat(ChatMessageRequest message, Long senderId, ChatRoom chatRoom) {
+        return new Chat(message.content(), senderId, ChatType.of(message.type()), chatRoom);
     }
 }
