@@ -49,7 +49,7 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
             String username = jwtUtil.getUsername(token);
 
             attributes.put("username", username);
-            request.getAttributes(); // 여기서 꺼내야 하는 거 아닌지
+//            request.getAttributes(); // 여기서 꺼내야 하는 거 아닌지
         }
 
         return true;

@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import snowcode.snowcode.assignment.exception.AssignmentException;
 import snowcode.snowcode.auth.exception.AuthException;
+import snowcode.snowcode.chat.exception.ChatException;
+import snowcode.snowcode.chatRoom.exception.ChatRoomException;
 import snowcode.snowcode.code.exception.CodeException;
 import snowcode.snowcode.common.exception.ValidationException;
 import snowcode.snowcode.common.response.BasicResponse;
@@ -147,6 +149,31 @@ public class GlobalExceptionHandler {
             case INVALID_LANGUAGE_TYPE -> HttpStatus.BAD_REQUEST;
         };
         log.error("Code Exception({}) = {}", e.getCode(), e.getMessage());
+        BasicResponse<ErrorEntity> error = ResponseUtil.error(
+                new ErrorEntity(e.getCode().toString(), e.getMessage())
+        );
+        return new ResponseEntity<>(error, status);
+    }
+
+    @ExceptionHandler(ChatRoomException.class)
+    public ResponseEntity<BasicResponse<ErrorEntity>> chatRoomException(ChatRoomException e) {
+        HttpStatus status = switch(e.getCode()) {
+            case NOT_FOUND_CHAT_ROOM -> HttpStatus.NOT_FOUND;
+            case CHAT_ROOM_ACCESS_DENIED -> HttpStatus.FORBIDDEN;
+        };
+        log.error("ChatRoom Exception({}) = {}", e.getCode(), e.getMessage());
+        BasicResponse<ErrorEntity> error = ResponseUtil.error(
+                new ErrorEntity(e.getCode().toString(), e.getMessage())
+        );
+        return new ResponseEntity<>(error, status);
+    }
+
+    @ExceptionHandler(ChatException.class)
+    public ResponseEntity<BasicResponse<ErrorEntity>> chatException(ChatException e) {
+        HttpStatus status = switch(e.getCode()) {
+            case INVALID_CHAT_TYPE -> HttpStatus.BAD_REQUEST;
+        };
+        log.error("Chat Exception({}) = {}", e.getCode(), e.getMessage());
         BasicResponse<ErrorEntity> error = ResponseUtil.error(
                 new ErrorEntity(e.getCode().toString(), e.getMessage())
         );
