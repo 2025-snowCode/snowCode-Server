@@ -79,4 +79,12 @@ public class ChatRoomFacade {
         // 최신순으로 정렬
         return ChatRoomListResponseWithCount.of(chatRoomListResponseList);
     }
+
+    public boolean hasUser(ChatRoom chatRoom, Long memberId) {
+        List<ChatRoomUser> chatRoomUserList = chatRoomUserService.findChatRoomUserByChatRoomId(chatRoom.getId());
+        for (ChatRoomUser chatRoomUser : chatRoomUserList) {
+            if (chatRoomUser.getMember().getId().equals(memberId)) return true;
+        }
+        return false;
+    }
 }
