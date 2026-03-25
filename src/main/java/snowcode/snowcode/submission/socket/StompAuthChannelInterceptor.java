@@ -27,6 +27,7 @@ public class StompAuthChannelInterceptor implements ChannelInterceptor {
 
         // 최초 연결 시에만 확인
         if (StompCommand.CONNECT.equals(accessor.getCommand())) {
+            log.info("CONNECT user BEFORE = {}", accessor.getUser());
 
             String token = accessor.getFirstNativeHeader("Authorization");
 
@@ -40,6 +41,7 @@ public class StompAuthChannelInterceptor implements ChannelInterceptor {
                     accessor.setUser(new UsernamePasswordAuthenticationToken(
                             username, null, List.of()
                     ));
+                    log.info("CONNECT user AFTER = {}", accessor.getUser());
                 }
             } catch (Exception e) {
                 log.error("토큰 검증 중 에러 발생");
@@ -54,6 +56,7 @@ public class StompAuthChannelInterceptor implements ChannelInterceptor {
         // 프론트 -> 서버 전송
         if (StompCommand.SEND.equals(accessor.getCommand())) {
             log.info("프론트 -> 서버 응답 수신");
+            log.info("SEND user BEFORE = {}", accessor.getUser());
             if (accessor.getUser() == null) {
                 String token = accessor.getFirstNativeHeader("Authorization");
 
@@ -66,6 +69,7 @@ public class StompAuthChannelInterceptor implements ChannelInterceptor {
                         accessor.setUser(new UsernamePasswordAuthenticationToken(
                                 username, null, List.of()
                         ));
+                        log.info("SEND user AFTER = {}", accessor.getUser());
                     }
                 }
             }
