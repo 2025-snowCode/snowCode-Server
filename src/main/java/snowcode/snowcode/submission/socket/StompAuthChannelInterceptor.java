@@ -9,14 +9,16 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Component;
+import snowcode.snowcode.auth.service.JwtUtil;
 
 import java.util.List;
-import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
 @Slf4j
 public class StompAuthChannelInterceptor implements ChannelInterceptor {
+
+    private final JwtUtil jwtUtil;
 
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
@@ -26,16 +28,14 @@ public class StompAuthChannelInterceptor implements ChannelInterceptor {
         // 최초 연결 시에만 확인
         if (StompCommand.CONNECT.equals(accessor.getCommand())) {
 
-            Map<String, Object> sessionAttributes = accessor.getSessionAttributes();
+            String token = accessor.getFirstNativeHeader("Authorization");
 
-            if (sessionAttributes != null) {
-                String username = (String) sessionAttributes.get("username");
+            if (token != null && jwtUtil.validateToken(token)) {
+                String username = jwtUtil.getUsername(token);
 
-                if (username != null) {
-                    accessor.setUser(new UsernamePasswordAuthenticationToken(
-                            username, null, List.of()
-                    ));
-                }
+                accessor.setUser(new UsernamePasswordAuthenticationToken(
+                        username, null, List.of()
+                ));
             }
         }
 
