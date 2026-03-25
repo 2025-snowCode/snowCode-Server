@@ -99,6 +99,11 @@ public class AuthService {
         return new CustomUserDetails(member);
     }
 
+    public Member findByUsername(String username) {
+        return memberRepository.findByUsername(UUID.fromString(username))
+                .orElseThrow(() -> new TokenException(TokenErrorCode.UNAUTHORIZED));
+    }
+
     public Member loadMember() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
