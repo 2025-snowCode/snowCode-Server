@@ -23,17 +23,8 @@ public class WebSocketConfigSTOMP implements WebSocketMessageBrokerConfigurer {
     @Value("${cors.allowed.server}")
     private String server;
 
-
-
-
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/stomp")
-                .setAllowedOriginPatterns(frontend, server, "http://localhost:5173")
-                .addInterceptors(jwtHandshakeInterceptor)
-//                .setAllowedOriginPatterns("*")
-                .withSockJS();
-
         registry.addEndpoint("/stomp")
                 .setAllowedOriginPatterns(frontend, server, "http://localhost:5173")
                 .addInterceptors(jwtHandshakeInterceptor);

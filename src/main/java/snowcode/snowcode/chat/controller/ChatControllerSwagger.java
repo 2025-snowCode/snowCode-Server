@@ -24,7 +24,7 @@ public class ChatControllerSwagger {
     @GetMapping
     @Operation(summary = "채팅 전송 API", description = """
             ### WebSocket Endpoint (연결용) \n
-            - wss://{BackURL}/ws/stomp \n
+            - wss://{BackURL}/stomp \n
             
             \n
             
