@@ -9,6 +9,8 @@ import snowcode.snowcode.auth.service.AuthService;
 import snowcode.snowcode.chat.dto.ChatMessageRequest;
 import snowcode.snowcode.chat.service.ChatFacade;
 
+import java.security.Principal;
+
 @Controller
 @RequiredArgsConstructor
 @Slf4j
@@ -18,12 +20,13 @@ public class ChatController {
     private final ChatFacade chatFacade;
 
     @MessageMapping("/chat")
-    public void sendPrivateMessage(ChatMessageRequest message) {
+    public void sendPrivateMessage(ChatMessageRequest message, Principal principal) {
 
         log.info("sendMessage 수신");
 
         // sender 설정
-        Member sender = authService.loadMember();
+        String username = principal.getName();
+        Member sender = authService.findByUsername(username);
 
         chatFacade.sendAndSaveMessage(message, sender);
 
