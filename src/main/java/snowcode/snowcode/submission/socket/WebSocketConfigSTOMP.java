@@ -14,18 +14,29 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @RequiredArgsConstructor
 public class WebSocketConfigSTOMP implements WebSocketMessageBrokerConfigurer {
 
+    private final JwtHandshakeInterceptor jwtHandshakeInterceptor;
+    private final StompAuthChannelInterceptor stompAuthChannelInterceptor;
+
     @Value("${cors.allowed.frontend}")
     private String frontend;
 
     @Value("${cors.allowed.server}")
     private String server;
 
-    private final StompAuthChannelInterceptor stompAuthChannelInterceptor;
+
+
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws/stomp")
-                .setAllowedOriginPatterns(frontend, server, "http://localhost:5173");
+        registry.addEndpoint("/stomp")
+                .setAllowedOriginPatterns(frontend, server, "http://localhost:5173")
+                .addInterceptors(jwtHandshakeInterceptor)
+//                .setAllowedOriginPatterns("*")
+                .withSockJS();
+
+        registry.addEndpoint("/stomp")
+                .setAllowedOriginPatterns(frontend, server, "http://localhost:5173")
+                .addInterceptors(jwtHandshakeInterceptor);
 //                .setAllowedOriginPatterns("*");
     }
 
