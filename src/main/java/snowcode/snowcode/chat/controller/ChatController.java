@@ -1,6 +1,7 @@
 package snowcode.snowcode.chat.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
 import snowcode.snowcode.auth.domain.Member;
@@ -10,6 +11,7 @@ import snowcode.snowcode.chat.service.ChatFacade;
 
 @Controller
 @RequiredArgsConstructor
+@Slf4j
 public class ChatController {
 
     private final AuthService authService;
@@ -18,9 +20,13 @@ public class ChatController {
     @MessageMapping("/chat")
     public void sendPrivateMessage(ChatMessageRequest message) {
 
+        log.info("sendMessage 수신");
+
         // sender 설정
         Member sender = authService.loadMember();
 
         chatFacade.sendAndSaveMessage(message, sender);
+
+        log.info("브로드캐스트 성공");
     }
 }
