@@ -50,6 +50,7 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
 
             attributes.put("username", username);
 //            request.getAttributes(); // 여기서 꺼내야 하는 거 아닌지
+            log.info("handshake 인증 성공");
         }
 
         return true;
