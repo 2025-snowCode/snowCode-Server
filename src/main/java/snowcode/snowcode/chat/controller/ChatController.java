@@ -23,6 +23,7 @@ public class ChatController {
     public void sendPrivateMessage(ChatMessageRequest message, Principal principal) {
 
         log.info("sendMessage 수신");
+        log.info("CONTROLLER principal = {}", principal);
 
         // sender 설정
         String username = principal.getName();
