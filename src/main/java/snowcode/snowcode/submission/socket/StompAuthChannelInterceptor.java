@@ -30,21 +30,28 @@ public class StompAuthChannelInterceptor implements ChannelInterceptor {
 
             String token = accessor.getFirstNativeHeader("Authorization");
 
-            if (token != null && jwtUtil.validateToken(token)) {
-                String username = jwtUtil.getUsername(token);
+            if (token != null) {
+                token = token.substring(7);
+            }
+            try {
+                if (jwtUtil.validateToken(token)) {
+                    String username = jwtUtil.getUsername(token);
 
-                accessor.setUser(new UsernamePasswordAuthenticationToken(
-                        username, null, List.of()
-                ));
+                    accessor.setUser(new UsernamePasswordAuthenticationToken(
+                            username, null, List.of()
+                    ));
+                }
+            } catch (Exception e) {
+                log.error("토큰 검증 중 에러 발생");
             }
         }
 
         // 채팅방 입장
-         if (StompCommand.SUBSCRIBE.equals(accessor.getCommand())) {
-             log.info("[SUBSCRIBE] 채팅방 입장");
-         }
+        if (StompCommand.SUBSCRIBE.equals(accessor.getCommand())) {
+            log.info("[SUBSCRIBE] 채팅방 입장");
+        }
 
-         // 프론트 -> 서버 전송
+        // 프론트 -> 서버 전송
         if (StompCommand.SEND.equals(accessor.getCommand())) {
             log.info("프론트 -> 서버 응답 수신");
         }
