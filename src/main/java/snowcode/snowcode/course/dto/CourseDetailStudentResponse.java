@@ -17,12 +17,14 @@ public record CourseDetailStudentResponse(
         String semester,
         @Schema(description = "분반", example = "001")
         String section,
+        @Schema(description = "채팅방 id", example = "1")
+        Long chatRoomId,
         @Schema(description = "단원 수", example = "3")
         int unitCount,
         @Schema(description = "단원 리스트")
         List<UnitDetailStudentResponse> units) {
 
-    public static CourseDetailStudentResponse of (Course course, List<UnitDetailStudentResponse> units) {
-        return new CourseDetailStudentResponse(course.getId(), course.getTitle(), course.getYear(), course.getSemester().toString(), course.getSection(), units.size(), units);
+    public static CourseDetailStudentResponse of (Course course, Long chatRoomId, List<UnitDetailStudentResponse> units) {
+        return new CourseDetailStudentResponse(course.getId(), course.getTitle(), course.getYear(), course.getSemester().toString(), course.getSection(), chatRoomId, units.size(), units);
     }
 }
