@@ -12,6 +12,7 @@ public enum AuthErrorCode {
     STUDENT_NOT_FOUND("학생을 찾을 수 없습니다."),
     IS_ALREADY_ENROLLED_STUDENT("이미 등록된 학생입니다."),
     DUPLICATE_STUDENT_ID("중복된 학번을 사용할 수 없습니다."),
+    FAILED_UPLOAD_STUDENT_CSV("학생 일괄 등록에 실패하였습니다."),
 
     INVALID_ROLE("ADMIN만 가능합니다."),
     INVALID_COURSE_ROLE("강의 생성자만 접근 가능합니다."),
