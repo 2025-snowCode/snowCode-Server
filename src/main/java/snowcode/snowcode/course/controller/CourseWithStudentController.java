@@ -9,7 +9,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import snowcode.snowcode.auth.domain.Member;
 import snowcode.snowcode.auth.service.AuthContext;
 import snowcode.snowcode.auth.service.AuthService;
@@ -52,6 +54,27 @@ public class CourseWithStudentController {
         authContext.isCourseOwner(courseId); // 인가
         Member admin = authService.loadMember();
         courseWithEnrollmentFacade.addStudentWithEnroll(admin, courseId, dto);
+        return ResponseUtil.success("학생 추가에 성공하였습니다.");
+    }
+
+    @PostMapping(
+            value = "/{courseId}/enrollments/bulk",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "학생 일괄 등록 API", description = "학생 등록, 없는 학생 or 이미 등록된 학생이 포함되어 있으면 X")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "학생 등록 성공",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = String.class))}),
+            @ApiResponse(responseCode = "400", description = "BAD_INPUT",
+                    content = {@Content(schema = @Schema(implementation = BasicResponse.class))}),
+            @ApiResponse(responseCode = "404", description = "학생을 찾을 수 없습니다.",
+                    content = {@Content(schema = @Schema(implementation = BasicResponse.class))}),
+            @ApiResponse(responseCode = "404", description = "강의가 존재하지 않습니다.",
+                    content = {@Content(schema = @Schema(implementation = BasicResponse.class))}),
+    })
+    public BasicResponse<String> addStudentCsv(@PathVariable Long courseId, @Valid @RequestPart MultipartFile file) {
+        authContext.isCourseOwner(courseId); // 인가
+        Member admin = authService.loadMember();
+        courseWithEnrollmentFacade.addStudentWithEnroll(admin, courseId, file);
         return ResponseUtil.success("학생 추가에 성공하였습니다.");
     }
 
