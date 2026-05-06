@@ -3,6 +3,7 @@ package snowcode.snowcode.course.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import snowcode.snowcode.assignmentRegistration.service.RegistrationService;
 import snowcode.snowcode.auth.domain.Member;
 import snowcode.snowcode.auth.exception.AuthErrorCode;
@@ -20,7 +21,10 @@ import snowcode.snowcode.student.dto.StudentRequest;
 import snowcode.snowcode.student.service.StudentService;
 import snowcode.snowcode.unit.service.UnitService;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -70,6 +74,32 @@ public class CourseWithEnrollmentFacade {
         Long studentId = student.getId();
         if (adminId != studentId && chatRoomService.isNotPresentChatRoom(adminId, studentId)) {
             chatRoomFacade.createChatRoom(admin, student);
+        }
+    }
+
+    public void addStudentWithEnroll(Member admin, Long courseId, MultipartFile file) {
+
+        List<StudentRequest> requests;
+        try {
+            BufferedReader br = new BufferedReader(
+                    new InputStreamReader(file.getInputStream())
+            );
+
+            requests = br.lines()
+                    .map(line -> line.replace("\uFEFF", "").trim())
+                    .filter(line -> !line.isBlank())
+                    .flatMap(line -> Arrays.stream(line.split(",")))
+                    .map(String::trim)
+                    .filter(value -> !value.isBlank())
+                    .map(StudentRequest::new)
+                    .toList();
+        } catch (Exception e) {
+            throw new AuthException(AuthErrorCode.FAILED_UPLOAD_STUDENT_CSV);
+        }
+        if (requests.isEmpty()) return;
+
+        for (StudentRequest rq : requests) {
+            addStudentWithEnroll(admin, courseId, rq);
         }
     }
 

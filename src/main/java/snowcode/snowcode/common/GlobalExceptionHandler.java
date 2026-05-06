@@ -45,11 +45,8 @@ public class GlobalExceptionHandler {
         HttpStatus status = switch(e.getCode()) {
             case MEMBER_NOT_FOUND, STUDENT_NOT_FOUND -> HttpStatus.NOT_FOUND;
             case INVALID_USER_ROLE, IS_ALREADY_ENROLLED_STUDENT, DUPLICATE_STUDENT_ID -> HttpStatus.BAD_REQUEST;
-            case INVALID_ROLE,
-                 INVALID_ASSIGNMENT_ROLE,
-                 INVALID_COURSE_ROLE,
-                 INVALID_ENROLLED_ROLE,
-                 INVALID_CODE_ROLE -> HttpStatus.FORBIDDEN;
+            case FAILED_UPLOAD_STUDENT_CSV, INVALID_ROLE, INVALID_ASSIGNMENT_ROLE, INVALID_COURSE_ROLE,
+                 INVALID_ENROLLED_ROLE, INVALID_CODE_ROLE -> HttpStatus.FORBIDDEN;
         };
         log.error("Auth Exception({}) = {}", e.getCode(), e.getMessage());
         BasicResponse<ErrorEntity> error = ResponseUtil.error(
