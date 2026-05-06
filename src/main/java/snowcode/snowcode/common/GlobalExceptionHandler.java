@@ -133,7 +133,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<BasicResponse<ErrorEntity>> testcaseException(TestcaseException e) {
         HttpStatus status = switch(e.getCode()) {
             case TESTCASE_NOT_FOUND -> HttpStatus.NOT_FOUND;
-            case INVALID_TESTCASE_ROLE_TYPE -> HttpStatus.BAD_REQUEST;
+            case FAILED_UPLOAD_TESTCASE_FILE, INVALID_TESTCASE_ROLE_TYPE -> HttpStatus.BAD_REQUEST;
         };
         log.error("Testcase Exception({}) = {}", e.getCode(), e.getMessage());
         BasicResponse<ErrorEntity> error = ResponseUtil.error(

@@ -1,8 +1,11 @@
 package snowcode.snowcode.testcase.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import snowcode.snowcode.assignment.domain.Assignment;
 import snowcode.snowcode.testcase.domain.Testcase;
 import snowcode.snowcode.testcase.dto.TestcaseCreateRequest;
@@ -13,6 +16,7 @@ import snowcode.snowcode.testcase.exception.TestcaseErrorCode;
 import snowcode.snowcode.testcase.exception.TestcaseException;
 import snowcode.snowcode.testcase.repository.TestcaseRepository;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +32,25 @@ public class TestcaseService {
         Testcase testcase = Testcase.createTestCase(assignment, dto.testcase(), dto.answer(), dto.isPublic());
         testcaseRepository.save(testcase);
         return TestcaseResponse.from(testcase);
+    }
+
+    @Transactional
+    public void createTestcase(Assignment assignment, MultipartFile file) {
+        // Jackson 타입으로 파싱
+        List<TestcaseRequest> requests;
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+
+            requests = mapper.readValue(file.getInputStream(), new TypeReference<>() {});
+        } catch (Exception e) {
+            throw new TestcaseException(TestcaseErrorCode.FAILED_UPLOAD_TESTCASE_FILE);
+        }
+
+        if (requests.isEmpty()) return;
+
+        for (TestcaseRequest tc : requests) {
+            createTestcase(assignment, tc);
+        }
     }
 
     @Transactional

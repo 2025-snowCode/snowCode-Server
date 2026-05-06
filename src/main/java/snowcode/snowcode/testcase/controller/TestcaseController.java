@@ -8,7 +8,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import snowcode.snowcode.assignment.domain.Assignment;
 import snowcode.snowcode.assignment.service.AssignmentService;
 import snowcode.snowcode.auth.service.AuthContext;
@@ -44,6 +46,25 @@ public class TestcaseController {
         Assignment assignment = assignmentService.findById(assignmentId);
         TestcaseResponse testcase = testcaseService.createTestcase(assignment, dto);
         return ResponseUtil.success(testcase);
+    }
+
+    @PostMapping(
+            value = "{assignmentId}/bulk",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )    @Operation(summary = "테스트케이스 추가 API (JSON) ", description = "테스트케이스 JSON 파일로 추가")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "테스트케이스 추가 성공",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = TestcaseResponse.class))}),
+            @ApiResponse(responseCode = "400", description = "BAD_INPUT",
+                    content = {@Content(schema = @Schema(implementation = BasicResponse.class))}),
+            @ApiResponse(responseCode = "404", description = "과제가 존재하지 않습니다.",
+                    content = {@Content(schema = @Schema(implementation = BasicResponse.class))}),
+    })
+    public BasicResponse<String> createTestcaseWithJson(@PathVariable Long assignmentId, @Valid @RequestPart MultipartFile file) {
+        authContext.isAssignmentOwner(assignmentId); // 인가
+        Assignment assignment = assignmentService.findById(assignmentId);
+        testcaseService.createTestcase(assignment, file);
+        return ResponseUtil.success("테스트케이스 추가가 완료되었습니다.");
     }
 
     @DeleteMapping("{id}")
