@@ -8,6 +8,7 @@ import lombok.Getter;
 public enum TestcaseErrorCode {
 
     TESTCASE_NOT_FOUND("테스트케이스가 존재하지 않습니다."),
+    FAILED_UPLOAD_TESTCASE_FILE("테스트케이스 파일 업로드에 실패하였습니다."),
     INVALID_TESTCASE_ROLE_TYPE("TESTCASE 또는 EXAMPLE만 입력 가능합니다.");
 
     private final String message;
