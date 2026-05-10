@@ -17,6 +17,7 @@ import snowcode.snowcode.auth.service.AuthService;
 import snowcode.snowcode.code.dto.CodeRequest;
 import snowcode.snowcode.common.response.BasicResponse;
 import snowcode.snowcode.common.response.ResponseUtil;
+import snowcode.snowcode.submission.dto.SubmissionListResponse;
 import snowcode.snowcode.submission.dto.SubmissionResponse;
 import snowcode.snowcode.submission.service.SubmissionWithCodeFacade;
 
@@ -113,5 +114,22 @@ public class SubmissionController {
     })
     public BasicResponse<String> executeCode() {
         return ResponseUtil.success("Swagger 문서에서 WebSocket 연결 방법 참고");
+    }
+
+
+    @GetMapping("/{unitId}/{assignmentId}/code")
+    @Operation(summary = "제출 이력 조회 API", description = """
+            제출 날짜를 활용해 00일 전으로 표시해주세요! \n
+            코드 id를 활용해 제출한 코드를 불러올 수 있습니다
+            """)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "제출 이력 조회 성공",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = SubmissionResponse.class))}),
+    })
+    public BasicResponse<SubmissionListResponse> findSubmission(@PathVariable Long unitId, @PathVariable Long assignmentId) {
+        Assignment assignment = assignmentService.findById(assignmentId);
+        AssignmentRegistration assignmentRegistration = registrationService.findByUnitIdAndAssignmentId(unitId, assignmentId);
+        SubmissionListResponse response = submissionWithCodeFacade.findSubmissionList(assignment, assignmentRegistration);
+        return ResponseUtil.success(response);
     }
 }

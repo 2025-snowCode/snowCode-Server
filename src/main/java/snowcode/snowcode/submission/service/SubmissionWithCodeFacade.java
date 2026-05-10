@@ -11,11 +11,15 @@ import snowcode.snowcode.code.service.CodeExecutionService;
 import snowcode.snowcode.code.service.CodeService;
 import snowcode.snowcode.submission.domain.Submission;
 import snowcode.snowcode.submission.dto.JudgeResultDto;
+import snowcode.snowcode.submission.dto.SubmissionListResponse;
 import snowcode.snowcode.submission.dto.SubmissionResponse;
+import snowcode.snowcode.submission.dto.SubmissionWithCode;
 import snowcode.snowcode.testcase.dto.TestcaseInfoResponse;
 import snowcode.snowcode.testcase.service.TestcaseService;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -40,6 +44,23 @@ public class SubmissionWithCodeFacade {
 
         return SubmissionResponse.of(codeId, judgeDto);
 
+    }
+
+    public SubmissionListResponse findSubmissionList(Assignment assignment, AssignmentRegistration ar) {
+        int originalScore = assignment.getScore();
+
+        List<Long> submissionIds = submissionService.findAllByRegistrationId(ar.getId());
+        List<SubmissionWithCode> dtoList = new ArrayList<>();
+
+        for (Long submissionId : submissionIds) {
+            Optional<Submission> submission = submissionService.findById(submissionId);
+            if (submission.isEmpty()) break;
+            Long codeId = codeService.findBySubmissionId(submissionId);
+            SubmissionWithCode dto = SubmissionWithCode.of(codeId, originalScore, submission.get());
+            dtoList.add(dto);
+        }
+
+        return new SubmissionListResponse(assignment.getId(), dtoList);
     }
 
     public void deleteSubmissionWithRegistrationId(Long registrationId) {

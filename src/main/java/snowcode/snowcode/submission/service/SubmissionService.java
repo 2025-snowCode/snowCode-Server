@@ -30,6 +30,11 @@ public class SubmissionService {
     }
 
     @Transactional(readOnly = true)
+    public Optional<Submission> findById(Long submissionId) {
+        return submissionRepository.findById(submissionId);
+    }
+
+    @Transactional(readOnly = true)
     public List<Submission> findByMemberIdAndAssignmentRegistrationId(Long memberId, Long regId) {
         return submissionRepository.findByMemberIdAndAssignmentRegistrationId(memberId, regId);
     }
